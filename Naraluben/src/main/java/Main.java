@@ -6,6 +6,7 @@ import metier.Adresse;
 
 public class Main {
     public static void main(String[] args) {
+        //BDD
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
