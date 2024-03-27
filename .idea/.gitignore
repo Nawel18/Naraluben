@@ -6,5 +6,6 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-/../lib/
+/../lib/mysql-connector-j-8.3.0.jar
+/../lib/protobuf-java-3.25.1.jar
 .idea
