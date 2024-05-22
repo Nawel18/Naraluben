@@ -1,12 +1,10 @@
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jpaDao.JpaDaoAdresse;
 import metier.Adresse;
 
 public class Main {
     public static void main(String[] args) {
         //BDD 2
+        /*
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -29,5 +27,11 @@ public class Main {
         //rechercher un  type tier
         entityManager.close();
         entityManagerFactory.close();
+        */
+
+        JpaDaoAdresse jpa = new JpaDaoAdresse();
+        Adresse adresse = jpa.find(1);
+
+        System.out.println("addresse : " + adresse.getId());
     }
 }
