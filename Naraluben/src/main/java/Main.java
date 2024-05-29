@@ -1,10 +1,11 @@
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import metier.Adresse;
+import vues.VueBiens;
 
 public class Main extends Application {
 
@@ -20,44 +21,36 @@ public class Main extends Application {
 
         System.out.println("Adresse : " + adresse.getId());
 
+
+        Button b1 = new Button("Main");
+
+        /*
         Label l = new Label("Adress found : " + adresse.getId());
-        Scene scene = new Scene(new StackPane(l), 640, 480);
-        stage.setScene(scene);
+        TextField t = new TextField();
+        ChoiceBox choiceBox = new ChoiceBox();
+
+
+        t.setLayoutX(300);
+        t.setLayoutY(300);
+
+        choiceBox.getItems().add("Choice 1");
+        choiceBox.getItems().add("Choice 2");
+        choiceBox.getItems().add("Choice 3");
+        HBox hbox = new HBox(choiceBox);
+
+        //hbox.setLayoutX(400);
+        //hbox.setLayoutY(400);
+
+         */
+        Group ajoutBien2 = new Group(b1);
+        Scene scene2 = new Scene(ajoutBien2, 1700, 950, true);
+
+        VueBiens biens = new VueBiens(stage);
+
+        b1.setOnAction(event -> new VueBiens(stage));
+
+        stage.setScene(scene2);
         stage.show();
     }
 
 }
-
-/*import jpaDao.JpaDaoAdresse;
-import metier.Adresse;
-
-public class Main {
-    public static void main(String[] args) {
-        //BDD 2
-
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        //création d'une adresse
-        try {
-            transaction.begin();
-            Adresse adresse = new Adresse();
-            adresse.setNoDansLaRue("19");
-            adresse.setNomRue("Faux Puits");
-            entityManager.persist(adresse);
-            transaction.commit();
-            System.out.println("Une adresse est crée " +adresse.getId());
-        }catch (Exception e){
-            System.out.println("Exception : "+ e.getMessage());
-        }finally {
-            if(transaction.isActive()){
-                transaction.rollback();
-            }
-        }
-        //rechercher un  type tier
-        entityManager.close();
-        entityManagerFactory.close();
-    }
-}
-*/
-
