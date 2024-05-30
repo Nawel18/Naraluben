@@ -1,13 +1,12 @@
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import metier.Adresse;
 import vues.VueBiens;
+
+import java.io.FileNotFoundException;
 
 public class Main extends Application {
 
@@ -22,9 +21,6 @@ public class Main extends Application {
         Adresse adresse = jpa.find(1);
 
         System.out.println("Adresse : " + adresse.getId());
-
-
-        Button b1 = new Button("Main");
 
         /*
         Label l = new Label("Adress found : " + adresse.getId());
@@ -52,14 +48,14 @@ public class Main extends Application {
         stage.setWidth(screenBounds.getWidth());
         stage.setHeight(screenBounds.getHeight());
 
-        Group ajoutBien2 = new Group(b1);
-        Scene scene2 = new Scene(ajoutBien2);
+        // Page d'accueil -> liste des biens
+        try {
+            VueBiens biens = new VueBiens(stage);
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
 
-        VueBiens biens = new VueBiens(stage);
-
-        b1.setOnAction(event -> new VueBiens(stage));
-
-        stage.setScene(scene2);
+        stage.setTitle("Naraluben");
         stage.show();
     }
 

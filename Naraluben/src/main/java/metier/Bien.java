@@ -54,6 +54,12 @@ public class Bien {
     @Column(name = "situation")
     private Integer situation;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "image")
+    private String image;
+
     @OneToMany(mappedBy = "bien")
     private Set<Annexe> annexes = new LinkedHashSet<>();
 
@@ -202,4 +208,44 @@ public class Bien {
         this.pieces = pieces;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Bien{" +
+                "id=" + id +
+                ", surface=" + surface +
+                ", adresse=" + adresse +
+                ", noLogement=" + noLogement +
+                ", etage=" + etage +
+                ", dateCreation=" + dateCreation +
+                ", typeBien=" + typeBien +
+                ", classificationBien=" + classificationBien +
+                ", typeChauffage=" + typeChauffage +
+                ", typeEauChaude=" + typeEauChaude +
+                ", nbPieces=" + nbPieces +
+                ", meuble=" + meuble +
+                ", situation=" + situation +
+                ", description='" + description + '\'' +
+                ", image='" + image + '\'' +
+                ", annexes=" + annexes +
+                ", bails=" + bails +
+                ", bienProprietaires=" + bienProprietaires +
+                ", pieces=" + pieces +
+                '}';
+    }
 }
