@@ -15,7 +15,7 @@ public class VueAjoutBien {
         Button b = new Button("Bien");
 
         Group ajoutBien = new Group(b);
-        this.scene = new Scene(ajoutBien, 1700, 950, true);
+        this.scene = new Scene(ajoutBien);
 
         stage.setScene(this.scene);
         stage.show();

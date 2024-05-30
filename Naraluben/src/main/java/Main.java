@@ -1,7 +1,9 @@
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import metier.Adresse;
@@ -42,8 +44,16 @@ public class Main extends Application {
         //hbox.setLayoutY(400);
 
          */
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        // Définir la taille du Stage en fonction des dimensions de l'écran
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
+        stage.setWidth(screenBounds.getWidth());
+        stage.setHeight(screenBounds.getHeight());
+
         Group ajoutBien2 = new Group(b1);
-        Scene scene2 = new Scene(ajoutBien2, 1700, 950, true);
+        Scene scene2 = new Scene(ajoutBien2);
 
         VueBiens biens = new VueBiens(stage);
 

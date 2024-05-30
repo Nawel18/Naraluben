@@ -19,7 +19,7 @@ public class VueBiens {
         b.setStyle("-fx-text-fill: #006400;");
 
         Group ajoutBien = new Group(b);
-        this.scene = new Scene(ajoutBien, 1700, 950, true);
+        this.scene = new Scene(ajoutBien);
 
         b.setOnAction(event -> new VueAjoutBien(this.stage));
 
