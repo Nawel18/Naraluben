@@ -4,8 +4,10 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
@@ -16,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class VueBiens {
+    private static int NB_BIENS_SUR_UNE_LIGNE = 3;
     private Stage stage;
     private Scene scene;
 
@@ -29,17 +32,28 @@ public class VueBiens {
         titre.setLayoutX(30);
         titre.setLayoutY(30);
 
-        //Container pour les biens
-        VBox containerBiens = new VBox();
-        containerBiens.setSpacing(10);
-        containerBiens.setLayoutX(200);
-        containerBiens.setLayoutY(200);
-
         //Récupération des biens
         JpaDaoBien jpa = new JpaDaoBien();
         List<Bien> biens = jpa.findAll();
 
+        //Container pour lister les biens
+        VBox containerBiens = new VBox();
+        containerBiens.setLayoutX(80);
+        containerBiens.setLayoutY(120);
+        containerBiens.setSpacing(30);
+
+        //Container pour une ligne de 4 biens
+        HBox ligneBiens = new HBox();
+        int i = 0;
+
         for (Bien bien : biens) {
+            if (i == 0) {
+                //Nouvelle ligne de 4 biens
+                ligneBiens = new HBox();
+                ligneBiens.setSpacing(30);
+                containerBiens.getChildren().add(ligneBiens);
+            }
+
             //Container pour un bien
             VBox containerBien = new VBox();
 
@@ -49,22 +63,23 @@ public class VueBiens {
 
             Image imageBien = new Image(new FileInputStream("src/main/images/" + bien.getImage()));
             ImageView imageView = new ImageView(imageBien);
+            imageView.setFitHeight(280);
+            imageView.setFitWidth(400);
 
-            imageView.setFitHeight(455);
-            imageView.setFitWidth(500);
-            //On garde le ratio pour les dimensions
-            imageView.setPreserveRatio(true);
-
+            //On redirige vers la vue DétailsBien au click sur un bien
             containerBien.setOnMouseClicked(event -> new VueDetailsBien(this.stage));
 
             containerBien.getChildren().addAll(imageView, labelId, labelSurface, labelType);
-            containerBiens.getChildren().add(containerBien);
+            ligneBiens.getChildren().add(containerBien);
+
+            if (i == NB_BIENS_SUR_UNE_LIGNE) i = 0;
+            else i++;
         }
 
         //Bouton ajout d'un bien
         Button buttonNouveauBien = new Button("Nouveau bien");
-        buttonNouveauBien.setLayoutX(700);
-        buttonNouveauBien.setLayoutY(500);
+        buttonNouveauBien.setLayoutX(200);
+        buttonNouveauBien.setLayoutY(30);
 
         //On redirige vers la vue VuejoutBien au click
         buttonNouveauBien.setOnAction(event -> new VueAjoutBien(this.stage));
@@ -73,7 +88,9 @@ public class VueBiens {
         Group page = new Group(titre, buttonNouveauBien, containerBiens);
 
         //On affiche la vue Bien
-        this.scene = new Scene(page);
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(page);
+        this.scene = new Scene(sp);
         stage.setScene(this.scene);
     }
 
