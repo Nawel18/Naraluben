@@ -2,7 +2,6 @@ package vues;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -28,9 +27,7 @@ public class VueBiens {
 
         //Titre de la vue
         Label titre = new Label("Liste des biens");
-        titre.setStyle("-fx-font: 24 arial;-fx-text-fill: #5693bd;");
-        titre.setLayoutX(30);
-        titre.setLayoutY(30);
+        titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
         //Récupération des biens
         JpaDaoBien jpa = new JpaDaoBien();
@@ -39,25 +36,19 @@ public class VueBiens {
         //Container pour lister les biens
         VBox containerBiens = new VBox();
         containerBiens.setLayoutX(80);
-        containerBiens.setLayoutY(120);
+        containerBiens.setLayoutY(100);
         containerBiens.setSpacing(30);
 
         //Container pour une ligne de 4 biens
         HBox ligneBiens = new HBox();
+        ligneBiens.setSpacing(30);
+        containerBiens.getChildren().add(ligneBiens);
+
         int i = 0;
 
         for (Bien bien : biens) {
-            if (i == 0) {
-                //Nouvelle ligne de 4 biens
-                ligneBiens = new HBox();
-                ligneBiens.setSpacing(30);
-                containerBiens.getChildren().add(ligneBiens);
-            }
 
-            //Container pour un bien
-            VBox containerBien = new VBox();
-
-            Label labelId = new Label("bien : " + bien.getId());
+            Label labelId = new Label("adresse : " + bien.getAdresse().getNoDansLaRue() + " " + bien.getAdresse().getNomRue() + ", " + bien.getAdresse().getVille());
             Label labelSurface = new Label("surface : " + bien.getSurface() + " m²");
             Label labelType = new Label("type : " + bien.getTypeBien().getTypeBien());
 
@@ -65,6 +56,9 @@ public class VueBiens {
             ImageView imageView = new ImageView(imageBien);
             imageView.setFitHeight(280);
             imageView.setFitWidth(400);
+
+            //Container pour un bien
+            VBox containerBien = new VBox(imageView, labelId, labelSurface, labelType);
 
             //On redirige vers la vue DétailsBien au click sur un bien
             containerBien.setOnMouseClicked(event -> {
@@ -75,23 +69,32 @@ public class VueBiens {
                 }
             });
 
-            containerBien.getChildren().addAll(imageView, labelId, labelSurface, labelType);
             ligneBiens.getChildren().add(containerBien);
 
-            if (i == NB_BIENS_SUR_UNE_LIGNE) i = 0;
-            else i++;
+            if (i == NB_BIENS_SUR_UNE_LIGNE) {
+                //Nouvelle ligne de 4 biens
+                ligneBiens = new HBox();
+                ligneBiens.setSpacing(30);
+                containerBiens.getChildren().add(ligneBiens);
+                i = 0;
+            } else i++;
         }
 
         //Bouton ajout d'un bien
-        Button buttonNouveauBien = new Button("Nouveau bien");
-        buttonNouveauBien.setLayoutX(200);
-        buttonNouveauBien.setLayoutY(30);
+        Image imagePlus = new Image(new FileInputStream("src/main/images/plus.png"));
+        ImageView imageView = new ImageView(imagePlus);
+        imageView.setFitHeight(200);
+        imageView.setFitWidth(200);
+
+        VBox boutonNouveauBien = new VBox(imageView);
+        boutonNouveauBien.setStyle("-fx-padding: 45px;");
+        ligneBiens.getChildren().add(boutonNouveauBien);
 
         //On redirige vers la vue VuejoutBien au click
-        buttonNouveauBien.setOnAction(event -> new VueAjoutBien(this.stage));
+        boutonNouveauBien.setOnMouseClicked(event -> new VueAjoutBien(this.stage));
 
         //On ajoute les différents éléments à la page
-        Group page = new Group(titre, buttonNouveauBien, containerBiens);
+        Group page = new Group(titre, containerBiens);
 
         //On affiche la vue Bien
         ScrollPane sp = new ScrollPane();

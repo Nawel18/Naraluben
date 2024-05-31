@@ -12,11 +12,6 @@ public class JpaDaoBien extends JpaDao<Bien> implements DaoBien {
     }
 
     @Override
-    public boolean create(Bien obj) {
-        return super.create(obj);
-    }
-
-    @Override
     public Bien find(int id) {
         return super.find(Bien.class, id);
     }
@@ -25,13 +20,4 @@ public class JpaDaoBien extends JpaDao<Bien> implements DaoBien {
         return super.findAll(Bien.class);
     }
 
-    @Override
-    public boolean update(Bien obj) {
-        return super.update(obj);
-    }
-
-    @Override
-    public boolean delete(Bien obj) {
-        return super.delete(obj);
-    }
 }
