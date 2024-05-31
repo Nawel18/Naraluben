@@ -67,7 +67,13 @@ public class VueBiens {
             imageView.setFitWidth(400);
 
             //On redirige vers la vue DétailsBien au click sur un bien
-            containerBien.setOnMouseClicked(event -> new VueDetailsBien(this.stage));
+            containerBien.setOnMouseClicked(event -> {
+                try {
+                    new VueDetailsBien(this.stage, bien);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             containerBien.getChildren().addAll(imageView, labelId, labelSurface, labelType);
             ligneBiens.getChildren().add(containerBien);
