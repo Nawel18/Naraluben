@@ -1,6 +1,5 @@
 package vues;
 
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,33 +31,49 @@ public class VueDetailsBien extends ScrollPane {
         VBox containerAdresse = new VBox();
         VBox container = new VBox();
         // espace
-        Region spacer, spacer1, spacer2, spacer3;
+        Region spacer, spacer1, spacer2, spacer3, spacer4;
         spacer = new Region();
         spacer1 = new Region();
         spacer2 = new Region();
+        spacer3 = new Region();
+        spacer4 = new Region();
+        spacer3.setMinHeight(10);
+        spacer4.setMinHeight(10);
         spacer.setMinHeight(10);
         spacer1.setMinHeight(10);
         spacer2.setMinHeight(10);
         //Titre
         Label Titre = new Label("Détail");
+        containerTitre.setMaxWidth(Double.MAX_VALUE); // Pour permettre au titre de s'étendre horizontalement
         containerTitre.setAlignment(Pos.CENTER);
         containerImage.setAlignment(Pos.CENTER);
+        containerImage.setMaxWidth(Double.MAX_VALUE); // Pour permettre à l'image de s'étendre horizontalement
         Titre.setStyle("-fx-font-size: 48px; -fx-text-alignment: center;");
         containerTitre.getChildren().add(Titre);
+        // verfication si le bien est disponible
+        Label labelSituation;
+        if (bien.getSituation() == 1) {
+            labelSituation = new Label("Logement Non disponible pour le moment !!!!");
+            labelSituation.setStyle("-fx-font-size: 48px; -fx-text-fill: red");
+        } else {
+            labelSituation = new Label("Logement disponible");
+            labelSituation.setStyle("-fx-font-size: 18px; -fx-color-label-visible: red");
+        }
         //Donné du bien
         Label labelTitle1 = new Label("Information du Bien : ");
         labelTitle1.setStyle("-fx-font-size: 18px;");
         Label labelTailleSurface = new Label("Surface totale : " + bien.getSurface() + "m²");
         Label labelNbPiece = new Label("Nombre de pièce : " + bien.getNbPieces() + " pièces");
-        Label labelSituation = new Label("Situation : " + bien.getSituation());
         Label labelDescription = new Label("Description : ");
         labelDescription.setStyle("-fx-font-size: 18px;");
         Label labelNomDescription = new Label(bien.getDescription());
+        //Ajout des blocs
+        containerBien.getChildren().addAll(labelSituation, labelTitle1, spacer, labelTailleSurface, labelNbPiece, spacer1, labelDescription, spacer2, labelNomDescription);
         //Adresse
         Label labelTitle1Adresse = new Label("Coordonnées géographiques : ");
         labelTitle1Adresse.setStyle("-fx-font-size: 18px;");
         Label labelNomRue = new Label("Adresse : " + bien.getAdresse().getNoDansLaRue() + " " + bien.getAdresse().getNomRue() + " " + bien.getAdresse().getVille());
-        containerAdresse.getChildren().addAll(labelTitle1Adresse, labelNomRue);
+        containerAdresse.getChildren().addAll(spacer3, labelTitle1Adresse, spacer4, labelNomRue);
         //image
         Image imageBien = new Image(new FileInputStream("src/main/images/" + bien.getImage()));
         ImageView imageView = new ImageView(imageBien);
@@ -67,26 +82,18 @@ public class VueDetailsBien extends ScrollPane {
         containerImage.getChildren().add(imageView);
 
 
-        //Ajout des blocs
-        containerBien.getChildren().addAll(labelTitle1, spacer, labelTailleSurface, labelNbPiece, labelSituation, spacer1, labelDescription, spacer2, labelNomDescription);
-        //Placement du containeur
-        double leftPadding = 10; // Padding à gauche
-        double rightPadding = 900; // Padding à droite
-        double topPadding = 10; // Padding en haut
-        double bottomPadding = 10;
-        containerBien.paddingProperty().bind(
-                Bindings.createObjectBinding(() ->
-                                new Insets(topPadding, rightPadding, bottomPadding, leftPadding),
-                        stage.widthProperty() // Utilise la largeur de la fenêtre
-                )
-        );
-
-        // couleur arriere plan
-        containerBien.setBackground(Background.fill(Color.web("#FFFFFF")));
+        // padding
+        containerBien.setPadding(new Insets(10, 10, 10, 10));
+        containerAdresse.setPadding(new Insets(10, 10, 10, 10));
         container.getChildren().addAll(containerTitre, containerImage, containerBien, containerAdresse);
+        container.setBackground(Background.fill(Color.web("#FFFFFF")));
+
         //création de la scène
+
         ScrollPane scroll = new ScrollPane();
         scroll.setContent(container);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
         //création de la scène
         this.scene = new Scene(scroll);
         stage.setScene(this.scene);
