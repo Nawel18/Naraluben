@@ -55,6 +55,8 @@ public class VueBiens {
             //On garde le ratio pour les dimensions
             imageView.setPreserveRatio(true);
 
+            containerBien.setOnMouseClicked(event -> new VueDetailsBien(this.stage));
+
             containerBien.getChildren().addAll(imageView, labelId, labelSurface, labelType);
             containerBiens.getChildren().add(containerBien);
         }
