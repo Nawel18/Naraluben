@@ -10,6 +10,7 @@ import java.util.Set;
 @Table(name = "bien")
 public class Bien {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no_bien", nullable = false)
     private Integer id;
 
@@ -71,6 +72,24 @@ public class Bien {
 
     @OneToMany(mappedBy = "bien")
     private Set<Piece> pieces = new LinkedHashSet<>();
+
+    public Bien(Integer surface, Integer noLogement, Integer etage, TypeBien typeBien, ClassificationBien classificationBien, TypeChauffage typeChauffage, TypeEauChaude typeEauChaude, Integer nbPieces, Boolean meuble, Integer situation, String description, String image) {
+        this.surface = surface;
+        this.noLogement = noLogement;
+        this.etage = etage;
+        this.typeBien = typeBien;
+        this.classificationBien = classificationBien;
+        this.typeChauffage = typeChauffage;
+        this.typeEauChaude = typeEauChaude;
+        this.nbPieces = nbPieces;
+        this.meuble = meuble;
+        this.situation = situation;
+        this.description = description;
+        this.image = image;
+    }
+
+    public Bien() {
+    }
 
     public Integer getId() {
         return id;

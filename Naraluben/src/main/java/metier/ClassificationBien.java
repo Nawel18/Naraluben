@@ -12,6 +12,14 @@ public class ClassificationBien {
     @Column(name = "classification_bien", nullable = false)
     private String classificationBien;
 
+    public ClassificationBien(String classificationBien) {
+        this.classificationBien = classificationBien;
+    }
+
+    public ClassificationBien() {
+
+    }
+
     public String getClassificationBien() {
         return classificationBien;
     }
@@ -19,6 +27,4 @@ public class ClassificationBien {
     public void setClassificationBien(String classificationBien) {
         this.classificationBien = classificationBien;
     }
-
-    //TODO [JPA Buddy] generate columns from DB
 }

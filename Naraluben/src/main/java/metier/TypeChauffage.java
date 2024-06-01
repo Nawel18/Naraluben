@@ -15,6 +15,14 @@ public class TypeChauffage {
     @OneToMany(mappedBy = "typeChauffage")
     private Set<Bien> biens = new LinkedHashSet<>();
 
+    public TypeChauffage(String typeChauffage) {
+        this.typeChauffage = typeChauffage;
+    }
+
+    public TypeChauffage() {
+
+    }
+
     public String getTypeChauffage() {
         return typeChauffage;
     }
@@ -30,5 +38,4 @@ public class TypeChauffage {
     public void setBiens(Set<Bien> biens) {
         this.biens = biens;
     }
-
 }

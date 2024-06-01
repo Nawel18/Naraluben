@@ -15,6 +15,14 @@ public class TypeBien {
     @OneToMany(mappedBy = "typeBien")
     private Set<Bien> biens = new LinkedHashSet<>();
 
+    public TypeBien(String typeBien) {
+        this.typeBien = typeBien;
+    }
+
+    public TypeBien() {
+
+    }
+
     public String getTypeBien() {
         return typeBien;
     }
@@ -30,5 +38,4 @@ public class TypeBien {
     public void setBiens(Set<Bien> biens) {
         this.biens = biens;
     }
-
 }

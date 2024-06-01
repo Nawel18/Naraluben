@@ -9,8 +9,8 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 
 public abstract class JpaDao<T> implements Dao<T> {
+    protected static EntityManager entityManager;
     private static EntityManagerFactory entityManagerFactory;
-    private static EntityManager entityManager;
     private EntityTransaction transaction;
 
     public JpaDao() {
