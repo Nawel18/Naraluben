@@ -63,7 +63,7 @@ public class VueBiens {
             //On redirige vers la vue DétailsBien au click sur un bien
             containerBien.setOnMouseClicked(event -> {
                 try {
-                    new VueDetailsBien(this.stage, bien);
+                    new VueDetailsBien(this.stage, bien, jpa);
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
