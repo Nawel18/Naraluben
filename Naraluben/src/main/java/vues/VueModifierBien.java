@@ -5,7 +5,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import jpaDao.JpaDaoBien;
@@ -15,15 +14,15 @@ import utils.ButtonsUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class VueAjoutBien {
+public class VueModifierBien {
     private Stage stage;
     private Scene scene;
 
-    public VueAjoutBien(Stage stage) {
+    public VueModifierBien(Stage stage, Bien bien, JpaDaoBien jpa) {
         this.stage = stage;
 
         //Titre de la vue
-        Label titre = new Label("Nouveau bien");
+        Label titre = new Label("Modification du bien");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
         Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
@@ -39,18 +38,19 @@ public class VueAjoutBien {
 
         TextField fieldNoRue = new TextField();
         fieldNoRue.setMinWidth(20);
-        fieldNoRue.setPromptText("N°");
+        fieldNoRue.setText(bien.getAdresse().getNoDansLaRue());
 
         TextField fieldRue = new TextField();
         fieldRue.setMinWidth(300);
-        fieldRue.setPromptText("Rue");
+        fieldRue.setText(bien.getAdresse().getNomRue());
 
         TextField fieldVille = new TextField();
         fieldVille.setMinWidth(300);
-        fieldVille.setPromptText("Ville");
+        fieldVille.setText(bien.getAdresse().getVille());
 
         HBox adresse = new HBox(labelAdresse, fieldNoRue, fieldRue, fieldVille);
         form.getChildren().add(adresse);
+
 
         //No logement
         Label labelNoLogement = new Label("N° logement : ");
@@ -58,7 +58,7 @@ public class VueAjoutBien {
 
         TextField fieldNoLogement = new TextField();
         fieldNoLogement.setMinWidth(300);
-
+        fieldNoLogement.setText(String.valueOf(bien.getNoLogement()));
         HBox noLogement = new HBox(labelNoLogement, fieldNoLogement);
         form.getChildren().add(noLogement);
 
@@ -68,6 +68,7 @@ public class VueAjoutBien {
 
         TextField fieldEtage = new TextField();
         fieldEtage.setMinWidth(300);
+        fieldEtage.setText(String.valueOf(bien.getEtage()));
 
         HBox etage = new HBox(labelEtage, fieldEtage);
         form.getChildren().add(etage);
@@ -78,6 +79,7 @@ public class VueAjoutBien {
 
         TextField fieldSurface = new TextField();
         fieldSurface.setMinWidth(300);
+        fieldSurface.setText(String.valueOf(bien.getSurface()));
 
         HBox surface = new HBox(labelSurface, fieldSurface);
         form.getChildren().add(surface);
@@ -88,6 +90,7 @@ public class VueAjoutBien {
 
         TextField fieldNbPieces = new TextField();
         fieldNbPieces.setMinWidth(300);
+        fieldNbPieces.setText(String.valueOf(bien.getNbPieces()));
 
         HBox nbPieces = new HBox(labelNbPieces, fieldNbPieces);
         form.getChildren().add(nbPieces);
@@ -97,6 +100,7 @@ public class VueAjoutBien {
         labelMeuble.setStyle("-fx-font: 16 arial;");
 
         CheckBox checkboxMeuble = new CheckBox();
+        if (bien.getMeuble()) checkboxMeuble.setSelected(true);
 
         HBox meuble = new HBox(labelMeuble, checkboxMeuble);
         form.getChildren().add(meuble);
@@ -109,6 +113,7 @@ public class VueAjoutBien {
         selectTypeBien.setMinWidth(300);
         selectTypeBien.getItems().addAll(metier.enums.TypeBien.values());
         HBox typeBien = new HBox(labelTypeBien, selectTypeBien);
+        if (bien.getTypeBien() != null) selectTypeBien.setValue(bien.getTypeBien().getTypeBien());
         form.getChildren().add(typeBien);
 
         //classification du bien
@@ -118,6 +123,8 @@ public class VueAjoutBien {
         ChoiceBox selectClassificationBien = new ChoiceBox();
         selectClassificationBien.setMinWidth(300);
         selectClassificationBien.getItems().addAll(metier.enums.ClassificationBien.values());
+        if (bien.getClassificationBien() != null)
+            selectClassificationBien.setValue(bien.getClassificationBien().getClassificationBien());
 
         HBox classificationBien = new HBox(labelClassificationBien, selectClassificationBien);
         form.getChildren().add(classificationBien);
@@ -129,6 +136,7 @@ public class VueAjoutBien {
         ChoiceBox selectTypeChauffage = new ChoiceBox();
         selectTypeChauffage.setMinWidth(300);
         selectTypeChauffage.getItems().addAll(metier.enums.TypeChauffage.values());
+        if (bien.getTypeEauChaude() != null) selectTypeChauffage.setValue(bien.getTypeChauffage().getTypeChauffage());
 
         HBox typeChauffage = new HBox(labelTypeChauffage, selectTypeChauffage);
         form.getChildren().add(typeChauffage);
@@ -140,6 +148,7 @@ public class VueAjoutBien {
         ChoiceBox selectEauChaude = new ChoiceBox();
         selectEauChaude.setMinWidth(300);
         selectEauChaude.getItems().addAll(metier.enums.TypeEauChaude.values());
+        if (bien.getTypeEauChaude() != null) selectEauChaude.setValue(bien.getTypeEauChaude().getTypeEauChaude());
 
         HBox eauChaude = new HBox(labelEauChaude, selectEauChaude);
         form.getChildren().add(eauChaude);
@@ -150,6 +159,7 @@ public class VueAjoutBien {
 
         TextArea fieldDescription = new TextArea();
         fieldDescription.setMinWidth(300);
+        fieldDescription.setText(bien.getDescription());
 
         HBox description = new HBox(labelDescription, fieldDescription);
         form.getChildren().add(description);
@@ -171,83 +181,61 @@ public class VueAjoutBien {
         });
 
         HBox image = new HBox(labelImage, boutonFichier, labelFichier);
+       
         form.getChildren().add(image);
 
         //Bouton d'ajout
-        Button boutonNouveauBien = new Button("Ajouter");
+        Button boutonModifier = new Button("Modifier");
+        boutonModifier.setStyle("-fx-alignment: top-right; -fx-end-margin: 10;");
+        boutonModifier.setOnMouseClicked(event -> {
+            TypeBien type = selectTypeBien.getValue() == null ? null : new TypeBien(selectTypeBien.getValue().toString());
+            ClassificationBien classification = selectClassificationBien.getValue() == null ? null : new ClassificationBien(selectClassificationBien.getValue().toString());
+            TypeChauffage chauffage = selectTypeChauffage.getValue() == null ? null : new TypeChauffage(selectTypeChauffage.getValue().toString());
+            TypeEauChaude eau = selectEauChaude.getValue() == null ? null : new TypeEauChaude(selectEauChaude.getValue().toString());
+            // Mise à jour de l'objet bien
+            bien.getAdresse().setNoDansLaRue(fieldNoRue.getText());
+            bien.getAdresse().setNomRue(fieldRue.getText());
+            bien.getAdresse().setVille(fieldVille.getText());
+            bien.setNoLogement(Integer.parseInt(fieldNoLogement.getText()));
+            bien.setEtage(Integer.parseInt(fieldEtage.getText()));
+            bien.setSurface(Integer.parseInt(fieldSurface.getText()));
+            bien.setNbPieces(Integer.parseInt(fieldNbPieces.getText()));
+            bien.setMeuble(checkboxMeuble.isSelected());
 
-        boutonNouveauBien.setOnMouseClicked(event -> {
+            bien.setTypeBien(type);
+            bien.setClassificationBien(classification);
+            bien.setTypeChauffage(chauffage);
+            bien.setTypeEauChaude(eau);
+            bien.setDescription(fieldDescription.getText());
+            bien.setImage(file[0].getName());
 
-            //Vérification que les champs obligatoires sont remplis
-            if (fieldNoRue.getText().isEmpty() || fieldRue.getText().isEmpty() || fieldVille.getText().isEmpty() || file[0] == null) {
-                Popup popup = new Popup();
-                Label labelError = new Label("Merci de compléter l'adresse et de choisir une image");
-                labelError.setStyle(" -fx-background-color: #de6767;-fx-padding: 10");
-                popup.getContent().add(labelError);
-                popup.show(this.stage);
-
-            } else {
-                //Mise à null en bdd des champs vides
-                TypeBien type = selectTypeBien.getValue() == null ? null : new TypeBien(selectTypeBien.getValue().toString());
-                ClassificationBien classification = selectClassificationBien.getValue() == null ? null : new ClassificationBien(selectClassificationBien.getValue().toString());
-                TypeChauffage chauffage = selectTypeChauffage.getValue() == null ? null : new TypeChauffage(selectTypeChauffage.getValue().toString());
-                TypeEauChaude eau = selectEauChaude.getValue() == null ? null : new TypeEauChaude(selectEauChaude.getValue().toString());
-
-                Integer surfaceValue = fieldSurface.getText().isEmpty() ? null : Integer.valueOf(fieldSurface.getText());
-                Integer noLogementValue = fieldNoLogement.getText().isEmpty() ? null : Integer.valueOf(fieldNoLogement.getText());
-                Integer etageValue = fieldEtage.getText().isEmpty() ? null : Integer.valueOf(fieldEtage.getText());
-                Integer nbPiecesValue = fieldNbPieces.getText().isEmpty() ? null : Integer.valueOf(fieldNbPieces.getText());
-
-                Bien nouveauBien = new Bien(surfaceValue, noLogementValue, etageValue,
-                        type, classification, chauffage, eau,
-                        nbPiecesValue, checkboxMeuble.isSelected(), 1,
-                        fieldDescription.getText(), file[0].getName());
-
-                Adresse nouvelleAdresse = new Adresse(fieldNoRue.getText(), fieldRue.getText(), fieldVille.getText());
-
-                ajouterBien(nouveauBien, nouvelleAdresse, file[0]);
-
-                //Retour à la page liste biens
-                try {
-                    new VueBiens(this.stage);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+            // Mise à jour dans la base de données
+            JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
+            Adresse adressebdd = jpaAdresse.find(bien.getAdresse().getId());
+            if (adressebdd != null) {
+                adressebdd.setNoDansLaRue(bien.getAdresse().getNoDansLaRue());
+                adressebdd.setNomRue(bien.getAdresse().getNomRue());
+                adressebdd.setVille(bien.getAdresse().getVille());
+                jpaAdresse.update(adressebdd);
             }
+
+            JpaDaoBien jpaBien = new JpaDaoBien();
+            jpaBien.update(bien);
+            try {
+                new VueDetailsBien(stage, bien, jpaBien);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
         });
 
-        VBox container = new VBox(boutonGoBack, titre, form, boutonNouveauBien);
+        HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifier);
+        VBox container = new VBox(boutonGoBack, titre, form, hboxModifier);
         this.scene = new Scene(container);
 
         this.stage.setScene(this.scene);
     }
 
-    private void ajouterBien(Bien bien, Adresse adresse, File image) {
-
-        //copie de l'image
-        image = ButtonsUtil.copyImage(image);
-
-        /*
-        //test si l'adresse existe déjà
-        JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
-        Adresse adresseTrouvee = jpaAdresse.findByNoAndRueAndVille(adresse.getNoDansLaRue(), adresse.getNomRue(), adresse.getVille());
-
-        if (adresseTrouvee == null) {
-            jpaAdresse.create(adresse);
-            adresseTrouvee = jpaAdresse.findByNoAndRueAndVille(adresse.getNoDansLaRue(), adresse.getNomRue(), adresse.getVille());
-        }
-        */
-
-        //test si l'adresse existe déjà
-        JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
-        jpaAdresse.create(adresse);
-
-        bien.setAdresse(adresse);
-
-        //création du bien en bdd
-        JpaDaoBien jpaBien = new JpaDaoBien();
-        jpaBien.create(bien);
-    }
 
     public Scene getScene() {
         return scene;
