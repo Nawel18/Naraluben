@@ -20,17 +20,21 @@ import utils.ButtonsUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.format.DateTimeFormatter;
 
 public class VueDetailsBien extends ScrollPane {
 
     private Scene scene;
 
-    public VueDetailsBien(Stage stage, Bien bien, JpaDaoBien jpa) throws FileNotFoundException {
+    public VueDetailsBien(Stage stage, Bien bien) throws FileNotFoundException {
+        //Récupération des biens
+        JpaDaoBien jpa = new JpaDaoBien();
+        bien = jpa.find(bien.getId());
         // Création des conteneurs VBox
         VBox containerTitre = createVBox();
         VBox containerImage = createVBox();
         VBox containerAdresse = createVBox();
-        VBox containerSupprimer = createVBox();
+
         VBox containerGoback = createVBox();
         VBox container = createVBox();
 
@@ -49,6 +53,9 @@ public class VueDetailsBien extends ScrollPane {
         //image
         Image imageBien = new Image(new FileInputStream("src/main/images/" + bien.getImage()));
         ImageView imageView = new ImageView(imageBien);
+        imageView.setFitWidth(500);  // Largeur fixe
+        imageView.setFitHeight(500); // Hauteur fixe
+        imageView.setPreserveRatio(true);
         containerImage.getChildren().add(imageView);
 
         // Utilisation pour créer le bouton de suppression
@@ -56,15 +63,20 @@ public class VueDetailsBien extends ScrollPane {
 
         // Utilisation pour créer le bouton de retour
         Button boutonGoBack = ButtonsUtil.createGoBackButton(stage);
+        HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
+
+        HBox hboxSupprimer = ButtonsUtil.createStyleButton(boutonSupprimer, "rouge");
+        hboxSupprimer.setStyle("-fx-alignment: center-left; -fx-padding: 15;");
         // Utilisation pour créer le bouton de retour
         Button boutonModifierBien = ButtonsUtil.createModifierBouttonButton(stage, bien, jpa);
-        HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifierBien);
+        HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifierBien, "vert");
 
         containerGoback.getChildren().add(boutonGoBack);
         StackPane.setAlignment(containerGoback, Pos.TOP_RIGHT);
         StackPane.setMargin(containerGoback, new Insets(10));
         StackPane stackPane = new StackPane(containerGoback);
-        containerSupprimer.getChildren().addAll(boutonSupprimer, hboxModifier);
+        HBox containerSupprimer = new HBox();
+        containerSupprimer.getChildren().addAll(hboxGoback, hboxSupprimer, hboxModifier);
         VBox containerBien = informationBien(bien);
 
         // padding
@@ -104,8 +116,10 @@ public class VueDetailsBien extends ScrollPane {
             labelSituation = new Label("Logement disponible");
             labelSituation.setStyle("-fx-font-size: 18px; -fx-text-fill: red");
         }
+        containerBien.getChildren().add(labelSituation);
         //Donné du bien
         Label labelTitle1 = createStyledLabel("Information du Bien : ", "-fx-font-size: 28px;");
+        containerBien.getChildren().add(labelTitle1);
         Label labelType;
         if (bien.getClassificationBien() == null) {
             labelType = createStyledLabel("Type : " + bien.getTypeBien().getTypeBien(), "-fx-font: 16 arial;");
@@ -113,26 +127,55 @@ public class VueDetailsBien extends ScrollPane {
         } else {
             labelType = createStyledLabel("Type : " + bien.getTypeBien().getTypeBien() + " (" + bien.getClassificationBien().getClassificationBien() + ")", "-fx-font: 16 arial;");
         }
-        Label labelTailleSurface = createStyledLabel("Surface totale : " + bien.getSurface() + "m²", "-fx-font: 16 arial;");
-        Label labelNbPiece = createStyledLabel("Nombre de pièce : " + bien.getNbPieces() + " pièces", "-fx-font: 16 arial;");
-        Label labelNbEtage = createStyledLabel("Nombre d'étage : " + bien.getEtage() + " étages", "-fx-font: 16 arial;");
-        Label labelDate = createStyledLabel("Date de fabrication : " + bien.getDateCreation(), "-fx-font: 16 arial;");
-        Label labelclassification = createStyledLabel("Classification du bien : " + bien.getClassificationBien().getClassificationBien(), "-fx-font: 16 arial;");
-        Label labelTypeChaufage = createStyledLabel("Type de chauffage : " + bien.getTypeChauffage().getTypeChauffage(), "-fx-font: 16 arial;");
-        Label labelEauChaude = createStyledLabel("Type eau chaude : " + bien.getTypeEauChaude().getTypeEauChaude(), "-fx-font: 16 arial;");
-        Label labelDescription = createStyledLabel("Description : ", "-fx-font-size: 28px;");
-        Label labelNomDescription = createStyledLabel(bien.getDescription(), "-fx-font: 16 arial;");
+        containerBien.getChildren().add(labelType);
+        if (bien.getSurface() != null) {
+            Label labelTailleSurface = createStyledLabel("Surface totale : " + bien.getSurface() + "m²", "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelTailleSurface);
+        }
+        if (bien.getNbPieces() != null) {
+            Label labelNbPiece = createStyledLabel("Nombre de pièce : " + bien.getNbPieces() + " pièces", "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelNbPiece);
+        }
+        if (bien.getNbPieces() != null) {
+            Label labelNbEtage = createStyledLabel("Nombre d'étage : " + bien.getEtage() + " étages", "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelNbEtage);
+        }
+
+        if (bien.getDateCreation() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            String formattedDate = bien.getDateCreation().format(formatter);
+            Label labelDate = createStyledLabel("date : " + formattedDate, "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelDate);
+
+        }
+        //Chauffage
+        Label labelTypeChaufage;
+        if (bien.getTypeChauffage() != null) {
+            labelTypeChaufage = createStyledLabel("Type de chauffage : " + bien.getTypeChauffage().getTypeChauffage(), "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelTypeChaufage);
+        }
+        //Eau chaude
+        Label labelEauChaude;
+        if (bien.getTypeEauChaude() != null) {
+            labelEauChaude = createStyledLabel("Type eau chaude : " + bien.getTypeEauChaude().getTypeEauChaude(), "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelEauChaude);
+        }
+        if (bien.getDescription() != null) {
+            Label labelDescription = createStyledLabel("Description : ", "-fx-font-size: 28px;");
+            containerBien.getChildren().add(labelDescription);
+            Label labelNomDescription = createStyledLabel(bien.getDescription(), "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelNomDescription);
+        }
         //logement meublé ou non
         Label labelMeuble;
         if (bien.getMeuble()) {
             labelMeuble = createStyledLabel("Le logement est meublé", "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelMeuble);
         } else {
             labelMeuble = createStyledLabel("Le logement n'est pas meublé", "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelMeuble);
         }
-        //Ajout des blocs
-        containerBien.getChildren().addAll(labelSituation, labelTitle1, labelType, labelTailleSurface, labelNbPiece, labelNbEtage, labelclassification, labelEauChaude, labelTypeChaufage, labelDate, labelMeuble, labelDescription, labelNomDescription);
         return containerBien;
-
     }
 
     public static Label createStyledLabel(String text, String style) {

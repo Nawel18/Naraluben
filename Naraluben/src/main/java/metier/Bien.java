@@ -73,7 +73,7 @@ public class Bien {
     @OneToMany(mappedBy = "bien")
     private Set<Piece> pieces = new LinkedHashSet<>();
 
-    public Bien(Integer surface, Integer noLogement, Integer etage, TypeBien typeBien, ClassificationBien classificationBien, TypeChauffage typeChauffage, TypeEauChaude typeEauChaude, Integer nbPieces, Boolean meuble, Integer situation, String description, String image) {
+    public Bien(Integer surface, Integer noLogement, Integer etage, TypeBien typeBien, ClassificationBien classificationBien, TypeChauffage typeChauffage, TypeEauChaude typeEauChaude, Integer nbPieces, Boolean meuble, Integer situation, String description, String image, LocalDate date) {
         this.surface = surface;
         this.noLogement = noLogement;
         this.etage = etage;
@@ -86,6 +86,7 @@ public class Bien {
         this.situation = situation;
         this.description = description;
         this.image = image;
+        this.dateCreation = date;
     }
 
     public Bien() {

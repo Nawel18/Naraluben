@@ -1,8 +1,11 @@
 package vues;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -14,6 +17,7 @@ import utils.ButtonsUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 
 public class VueAjoutBien {
     private Stage stage;
@@ -27,7 +31,13 @@ public class VueAjoutBien {
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
         Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
-
+        HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
+        VBox containerGoback = new VBox();
+        containerGoback.setSpacing(15);
+        containerGoback.getChildren().add(boutonGoBack);
+        StackPane.setAlignment(containerGoback, Pos.TOP_RIGHT);
+        StackPane.setMargin(containerGoback, new Insets(10));
+        StackPane stackPane = new StackPane(containerGoback);
         //Container pour le formulaire
         VBox form = new VBox();
         form.setStyle("-fx-padding: 50px;");
@@ -91,6 +101,14 @@ public class VueAjoutBien {
 
         HBox nbPieces = new HBox(labelNbPieces, fieldNbPieces);
         form.getChildren().add(nbPieces);
+
+        // Création d'un DatePicker avec une date
+        Label labeldate = new Label("Date : ");
+        labeldate.setStyle("-fx-font: 16 arial;");
+
+        DatePicker datePicker = new DatePicker(LocalDate.now());
+        HBox fielddate = new HBox(labeldate, datePicker);
+        form.getChildren().add(fielddate);
 
         //meublé
         Label labelMeuble = new Label("Logement meublé : ");
@@ -175,6 +193,7 @@ public class VueAjoutBien {
 
         //Bouton d'ajout
         Button boutonNouveauBien = new Button("Ajouter");
+        HBox hboxNouveauBien = ButtonsUtil.createStyleButton(boutonNouveauBien, "vert");
 
         boutonNouveauBien.setOnMouseClicked(event -> {
 
@@ -201,7 +220,7 @@ public class VueAjoutBien {
                 Bien nouveauBien = new Bien(surfaceValue, noLogementValue, etageValue,
                         type, classification, chauffage, eau,
                         nbPiecesValue, checkboxMeuble.isSelected(), 1,
-                        fieldDescription.getText(), file[0].getName());
+                        fieldDescription.getText(), file[0].getName(), datePicker.getValue());
 
                 Adresse nouvelleAdresse = new Adresse(fieldNoRue.getText(), fieldRue.getText(), fieldVille.getText());
 
@@ -216,8 +235,12 @@ public class VueAjoutBien {
             }
         });
 
-        VBox container = new VBox(boutonGoBack, titre, form, boutonNouveauBien);
-        this.scene = new Scene(container);
+        VBox container = new VBox(stackPane, titre, form, hboxNouveauBien);
+        ScrollPane scroll = new ScrollPane();
+        scroll.setContent(container);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        this.scene = new Scene(scroll);
 
         this.stage.setScene(this.scene);
     }

@@ -2,9 +2,7 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import vues.VueBiens;
-
-import java.io.FileNotFoundException;
+import vues.VueConnexion;
 
 public class Main extends Application {
 
@@ -30,13 +28,9 @@ public class Main extends Application {
         stage.setWidth(screenBounds.getWidth());
         stage.setHeight(screenBounds.getHeight());
 
-        // Page d'accueil -> liste des biens
-        try {
-            VueBiens biens = new VueBiens(stage);
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        }
+        // Page d'accueil -> Connexio
 
+        VueConnexion connexion = new VueConnexion(stage);
         stage.setTitle("Naraluben");
         stage.show();
     }

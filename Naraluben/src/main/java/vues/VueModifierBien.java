@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import jpaDao.JpaDaoBien;
@@ -26,6 +27,7 @@ public class VueModifierBien {
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
         Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
+        HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
 
         //Container pour le formulaire
         VBox form = new VBox();
@@ -94,6 +96,14 @@ public class VueModifierBien {
 
         HBox nbPieces = new HBox(labelNbPieces, fieldNbPieces);
         form.getChildren().add(nbPieces);
+
+        // Création d'un DatePicker avec une date
+        Label labeldate = new Label("Date : ");
+        labeldate.setStyle("-fx-font: 16 arial;");
+
+        DatePicker datePicker = new DatePicker(bien.getDateCreation());
+        HBox fielddate = new HBox(labeldate, datePicker);
+        form.getChildren().add(fielddate);
 
         //meublé
         Label labelMeuble = new Label("Logement meublé : ");
@@ -181,57 +191,85 @@ public class VueModifierBien {
         });
 
         HBox image = new HBox(labelImage, boutonFichier, labelFichier);
-       
+
         form.getChildren().add(image);
 
         //Bouton d'ajout
         Button boutonModifier = new Button("Modifier");
         boutonModifier.setStyle("-fx-alignment: top-right; -fx-end-margin: 10;");
+
         boutonModifier.setOnMouseClicked(event -> {
-            TypeBien type = selectTypeBien.getValue() == null ? null : new TypeBien(selectTypeBien.getValue().toString());
-            ClassificationBien classification = selectClassificationBien.getValue() == null ? null : new ClassificationBien(selectClassificationBien.getValue().toString());
-            TypeChauffage chauffage = selectTypeChauffage.getValue() == null ? null : new TypeChauffage(selectTypeChauffage.getValue().toString());
-            TypeEauChaude eau = selectEauChaude.getValue() == null ? null : new TypeEauChaude(selectEauChaude.getValue().toString());
-            // Mise à jour de l'objet bien
-            bien.getAdresse().setNoDansLaRue(fieldNoRue.getText());
-            bien.getAdresse().setNomRue(fieldRue.getText());
-            bien.getAdresse().setVille(fieldVille.getText());
-            bien.setNoLogement(Integer.parseInt(fieldNoLogement.getText()));
-            bien.setEtage(Integer.parseInt(fieldEtage.getText()));
-            bien.setSurface(Integer.parseInt(fieldSurface.getText()));
-            bien.setNbPieces(Integer.parseInt(fieldNbPieces.getText()));
-            bien.setMeuble(checkboxMeuble.isSelected());
+            if (fieldNoRue.getText().isEmpty() || fieldRue.getText().isEmpty() || fieldVille.getText().isEmpty()) {
+                Popup popup = new Popup();
+                Label labelError = new Label("Merci de compléter l'adresse et de choisir une image");
+                labelError.setStyle(" -fx-background-color: #de6767;-fx-padding: 10");
+                popup.getContent().add(labelError);
+                popup.show(this.stage);
 
-            bien.setTypeBien(type);
-            bien.setClassificationBien(classification);
-            bien.setTypeChauffage(chauffage);
-            bien.setTypeEauChaude(eau);
-            bien.setDescription(fieldDescription.getText());
-            bien.setImage(file[0].getName());
+            } else {
+                TypeBien type = selectTypeBien.getValue() == null ? null : new TypeBien(selectTypeBien.getValue().toString());
+                ClassificationBien classification = selectClassificationBien.getValue() == null ? null : new ClassificationBien(selectClassificationBien.getValue().toString());
+                TypeChauffage chauffage = selectTypeChauffage.getValue() == null ? null : new TypeChauffage(selectTypeChauffage.getValue().toString());
+                TypeEauChaude eau = selectEauChaude.getValue() == null ? null : new TypeEauChaude(selectEauChaude.getValue().toString());
 
-            // Mise à jour dans la base de données
-            JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
-            Adresse adressebdd = jpaAdresse.find(bien.getAdresse().getId());
-            if (adressebdd != null) {
-                adressebdd.setNoDansLaRue(bien.getAdresse().getNoDansLaRue());
-                adressebdd.setNomRue(bien.getAdresse().getNomRue());
-                adressebdd.setVille(bien.getAdresse().getVille());
-                jpaAdresse.update(adressebdd);
+                Integer surfaceValue = fieldSurface.getText().isEmpty() ? null : Integer.valueOf(fieldSurface.getText());
+                Integer noLogementValue = fieldNoLogement.getText().isEmpty() ? null : Integer.valueOf(fieldNoLogement.getText());
+                Integer etageValue = fieldEtage.getText().isEmpty() ? 0 : Integer.valueOf(fieldEtage.getText());
+                Integer nbPiecesValue = fieldNbPieces.getText().isEmpty() ? null : Integer.valueOf(fieldNbPieces.getText());
+
+                // Mise à jour de l'objet bien
+                bien.getAdresse().setNoDansLaRue(fieldNoRue.getText());
+                bien.getAdresse().setNomRue(fieldRue.getText());
+                bien.getAdresse().setVille(fieldVille.getText());
+                bien.setNoLogement(noLogementValue);
+                bien.setEtage(etageValue);
+                bien.setSurface(surfaceValue);
+                bien.setNbPieces(nbPiecesValue);
+                bien.setMeuble(checkboxMeuble.isSelected());
+                bien.setDateCreation(datePicker.getValue());
+                bien.setTypeBien(type);
+                bien.setClassificationBien(classification);
+                bien.setTypeChauffage(chauffage);
+                bien.setTypeEauChaude(eau);
+                bien.setDescription(fieldDescription.getText());
+                if (file[0] == null) {
+                    bien.setImage(bien.getImage());
+                } else {
+                    bien.setImage(file[0].getName());
+                    file[0] = ButtonsUtil.copyImage(file[0]);
+                }
+
+                // Mise à jour dans la base de données
+                JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
+                Adresse adressebdd = jpaAdresse.find(bien.getAdresse().getId());
+                if (adressebdd != null) {
+                    adressebdd.setNoDansLaRue(bien.getAdresse().getNoDansLaRue());
+                    adressebdd.setNomRue(bien.getAdresse().getNomRue());
+                    adressebdd.setVille(bien.getAdresse().getVille());
+                    jpaAdresse.update(adressebdd);
+                }
+
+
+                JpaDaoBien jpaBien = new JpaDaoBien();
+                jpaBien.update(bien);
+
+                try {
+                    new VueDetailsBien(stage, bien);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
-
-            JpaDaoBien jpaBien = new JpaDaoBien();
-            jpaBien.update(bien);
-            try {
-                new VueDetailsBien(stage, bien, jpaBien);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
         });
 
-        HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifier);
-        VBox container = new VBox(boutonGoBack, titre, form, hboxModifier);
-        this.scene = new Scene(container);
+
+        HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifier, "vert");
+
+        VBox container = new VBox(hboxGoback, titre, form, hboxModifier);
+        ScrollPane scroll = new ScrollPane();
+        scroll.setContent(container);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        this.scene = new Scene(scroll);
 
         this.stage.setScene(this.scene);
     }

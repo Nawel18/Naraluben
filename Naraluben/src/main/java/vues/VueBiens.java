@@ -1,7 +1,7 @@
 package vues;
 
-import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
 import metier.Bien;
+import utils.ButtonsUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +25,7 @@ public class VueBiens {
     public VueBiens(Stage stage) throws FileNotFoundException {
 
         this.stage = stage;
+
 
         //Titre de la vue
         Label titre = new Label("Liste des biens");
@@ -42,7 +44,7 @@ public class VueBiens {
         //Container pour une ligne de 4 biens
         HBox ligneBiens = new HBox();
         ligneBiens.setSpacing(30);
-        containerBiens.getChildren().add(ligneBiens);
+        containerBiens.getChildren().addAll(ligneBiens);
 
         int i = 0;
 
@@ -63,7 +65,7 @@ public class VueBiens {
             //On redirige vers la vue DétailsBien au click sur un bien
             containerBien.setOnMouseClicked(event -> {
                 try {
-                    new VueDetailsBien(this.stage, bien, jpa);
+                    new VueDetailsBien(this.stage, bien);
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -92,9 +94,16 @@ public class VueBiens {
 
         //On redirige vers la vue VuejoutBien au click
         boutonNouveauBien.setOnMouseClicked(event -> new VueAjoutBien(this.stage));
+        //Déconnection
+        Button boutonDeconnexion = new Button();
+        boutonDeconnexion.setText("Déconnexion");
+        HBox hboxGoback = ButtonsUtil.createStyleButton(boutonDeconnexion, "vert");
+        boutonDeconnexion.setOnMouseClicked(event -> {
+            new VueConnexion(stage);
+        });
 
         //On ajoute les différents éléments à la page
-        Group page = new Group(titre, containerBiens);
+        VBox page = new VBox(hboxGoback, titre, containerBiens);
 
         //On affiche la vue Bien
         ScrollPane sp = new ScrollPane();
