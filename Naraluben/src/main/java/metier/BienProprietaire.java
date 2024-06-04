@@ -26,6 +26,14 @@ public class BienProprietaire {
     @Column(name = "date_fin")
     private LocalDate dateFin;
 
+    public BienProprietaire(Proprietaire proprietaire) {
+        this.proprietaire = proprietaire;
+    }
+
+    public BienProprietaire() {
+
+    }
+
     public BienProprietaireId getId() {
         return id;
     }
@@ -65,5 +73,4 @@ public class BienProprietaire {
     public void setDateFin(LocalDate dateFin) {
         this.dateFin = dateFin;
     }
-
 }

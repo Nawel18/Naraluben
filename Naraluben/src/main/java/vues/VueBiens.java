@@ -26,7 +26,6 @@ public class VueBiens {
 
         this.stage = stage;
 
-
         //Titre de la vue
         Label titre = new Label("Liste des biens");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");

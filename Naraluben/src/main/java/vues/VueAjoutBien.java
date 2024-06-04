@@ -12,12 +12,15 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import jpaDao.JpaDaoBien;
+import jpaDao.JpaDaoBienProprietaire;
+import jpaDao.JpaDaoProprietaire;
 import metier.*;
 import utils.ButtonsUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class VueAjoutBien {
     private Stage stage;
@@ -191,6 +194,23 @@ public class VueAjoutBien {
         HBox image = new HBox(labelImage, boutonFichier, labelFichier);
         form.getChildren().add(image);
 
+        //proprietaire
+        Label labelProprietaire = new Label("Propriétaire : ");
+        labelProprietaire.setStyle("-fx-font: 16 arial;");
+
+        //Récupération des propriétaires
+        JpaDaoProprietaire jpa = new JpaDaoProprietaire();
+        List<Proprietaire> proprietaires = jpa.findAll();
+
+        ChoiceBox selectProprietaire = new ChoiceBox();
+        selectProprietaire.setMinWidth(300);
+        for (Proprietaire proprietaire : proprietaires) {
+            selectProprietaire.getItems().add(proprietaire.getId() + "- " + proprietaire.getNoTiers().getPrenom() + " " + proprietaire.getNoTiers().getNom());
+        }
+
+        HBox proprietaire = new HBox(labelProprietaire, selectProprietaire);
+        form.getChildren().add(proprietaire);
+
         //Bouton d'ajout
         Button boutonNouveauBien = new Button("Ajouter");
         HBox hboxNouveauBien = ButtonsUtil.createStyleButton(boutonNouveauBien, "vert");
@@ -224,7 +244,15 @@ public class VueAjoutBien {
 
                 Adresse nouvelleAdresse = new Adresse(fieldNoRue.getText(), fieldRue.getText(), fieldVille.getText());
 
-                ajouterBien(nouveauBien, nouvelleAdresse, file[0]);
+                Proprietaire proprietaireChoisit;
+                if (selectProprietaire.getValue() == null)
+                    proprietaireChoisit = null;
+                else {
+                    JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
+                    proprietaireChoisit = jpaProprietaire.find(Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]));
+                }
+
+                ajouterBien(nouveauBien, nouvelleAdresse, proprietaireChoisit, file[0]);
 
                 //Retour à la page liste biens
                 try {
@@ -245,7 +273,7 @@ public class VueAjoutBien {
         this.stage.setScene(this.scene);
     }
 
-    private void ajouterBien(Bien bien, Adresse adresse, File image) {
+    private void ajouterBien(Bien bien, Adresse adresse, Proprietaire proprietaire, File image) {
 
         //copie de l'image
         image = ButtonsUtil.copyImage(image);
@@ -261,6 +289,7 @@ public class VueAjoutBien {
         }
         */
 
+        //adresse
         //test si l'adresse existe déjà
         JpaDaoAdresse jpaAdresse = new JpaDaoAdresse();
         jpaAdresse.create(adresse);
@@ -270,6 +299,16 @@ public class VueAjoutBien {
         //création du bien en bdd
         JpaDaoBien jpaBien = new JpaDaoBien();
         jpaBien.create(bien);
+
+        //création du bien_proprietaire en bdd
+        if (proprietaire != null) {
+            BienProprietaireId bienProprietaireId = new BienProprietaireId(bien, proprietaire);
+            BienProprietaire bienProprietaire = new BienProprietaire();
+            bienProprietaire.setId(bienProprietaireId);
+
+            JpaDaoBienProprietaire jpaBienProprietaire = new JpaDaoBienProprietaire();
+            jpaBienProprietaire.create(bienProprietaire);
+        }
     }
 
     public Scene getScene() {
