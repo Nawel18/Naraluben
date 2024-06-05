@@ -4,10 +4,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import jpaDao.JpaDaoTiers;
+import metier.Tiers;
 
 import java.io.FileNotFoundException;
 
@@ -37,7 +40,7 @@ public class VueConnexion {
         Label labelPassword = new Label("Mot de passe : ");
         labelPassword.setStyle("-fx-font: 16 arial;");
 
-        TextField fieldPassword = new TextField();
+        PasswordField fieldPassword = new PasswordField();
         fieldPassword.setMinWidth(300);
 
         HBox password = new HBox(labelPassword, fieldPassword);
@@ -46,12 +49,19 @@ public class VueConnexion {
 
         Button connexion = new Button("Connexion");
         container.getChildren().add(connexion);
+        JpaDaoTiers tiers = new JpaDaoTiers();
+
+
         connexion.setOnMouseClicked(event -> {
-            //faire la condition de connexion
-            try {
-                new VueBiens(stage);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+            Tiers foundTiers = tiers.findByEmailAndPassword(fieldEmail.getText(), fieldPassword.getText());
+
+            if (foundTiers != null) {
+                //faire la condition de connexion
+                try {
+                    new VueBiens(stage);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 

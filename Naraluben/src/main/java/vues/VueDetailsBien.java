@@ -60,7 +60,6 @@ public class VueDetailsBien extends ScrollPane {
         imageView.setFitHeight(500); // Hauteur fixe
         imageView.setPreserveRatio(true);
         containerImage.getChildren().add(imageView);
-
         // Utilisation pour créer le bouton de suppression
         Button boutonSupprimer = ButtonsUtil.createDeleteButton(jpa, bien, stage);
 
