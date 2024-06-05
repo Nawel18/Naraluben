@@ -180,13 +180,15 @@ public class VueModifierBien {
 
         FileChooser fileChooser = new FileChooser();
         Button boutonFichier = new Button("Sélectionner une image");
-        Label labelFichier = new Label("  Aucune image sélectionnée");
+        Label labelFichier = new Label("  " + bien.getImage() + " sélectionnée");
 
         File[] file = {null};
         boutonFichier.setOnMouseClicked(event -> {
             file[0] = fileChooser.showOpenDialog(this.stage);
             if (file[0] != null) {
                 labelFichier.setText("  " + file[0].getName() + " sélectionnée");
+            } else {
+                labelFichier.setText("  Aucune image sélectionnée");
             }
         });
 
