@@ -10,8 +10,8 @@ import java.util.List;
 
 public abstract class JpaDao<T> implements Dao<T> {
     protected static EntityManager entityManager;
-    private static EntityManagerFactory entityManagerFactory;
-    private EntityTransaction transaction;
+    protected static EntityManagerFactory entityManagerFactory;
+    protected EntityTransaction transaction;
 
     public JpaDao() {
         entityManagerFactory = Persistence.createEntityManagerFactory("default");

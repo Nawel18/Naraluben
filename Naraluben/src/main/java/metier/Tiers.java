@@ -47,6 +47,20 @@ public class Tiers {
     @OneToMany(mappedBy = "signataire")
     private Set<Signature> signatures = new LinkedHashSet<>();
 
+    public Tiers(String nom, String prenom, LocalDate dateDeNaissance, String noSs, String rib, String password, String email) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.dateDeNaissance = dateDeNaissance;
+        this.noSs = noSs;
+        this.rib = rib;
+        this.password = password;
+        this.email = email;
+    }
+
+    public Tiers() {
+
+    }
+
     public Integer getId() {
         return id;
     }
@@ -142,5 +156,4 @@ public class Tiers {
     public void setSignatures(Set<Signature> signatures) {
         this.signatures = signatures;
     }
-
 }

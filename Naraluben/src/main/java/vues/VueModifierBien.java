@@ -9,11 +9,17 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoAdresse;
 import jpaDao.JpaDaoBien;
+import jpaDao.JpaDaoBienProprietaire;
+import jpaDao.JpaDaoProprietaire;
 import metier.*;
 import utils.ButtonsUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class VueModifierBien {
     private Stage stage;
@@ -60,7 +66,8 @@ public class VueModifierBien {
 
         TextField fieldNoLogement = new TextField();
         fieldNoLogement.setMinWidth(300);
-        fieldNoLogement.setText(String.valueOf(bien.getNoLogement()));
+        String noLogementText = bien.getNoLogement() == null ? "" : String.valueOf(bien.getNoLogement());
+        fieldNoLogement.setText(noLogementText);
         HBox noLogement = new HBox(labelNoLogement, fieldNoLogement);
         form.getChildren().add(noLogement);
 
@@ -70,7 +77,8 @@ public class VueModifierBien {
 
         TextField fieldEtage = new TextField();
         fieldEtage.setMinWidth(300);
-        fieldEtage.setText(String.valueOf(bien.getEtage()));
+        String etageText = bien.getEtage() == null ? "" : String.valueOf(bien.getEtage());
+        fieldEtage.setText(etageText);
 
         HBox etage = new HBox(labelEtage, fieldEtage);
         form.getChildren().add(etage);
@@ -81,7 +89,8 @@ public class VueModifierBien {
 
         TextField fieldSurface = new TextField();
         fieldSurface.setMinWidth(300);
-        fieldSurface.setText(String.valueOf(bien.getSurface()));
+        String surfaceText = bien.getNbPieces() == null ? "" : String.valueOf(bien.getEtage());
+        fieldSurface.setText(surfaceText);
 
         HBox surface = new HBox(labelSurface, fieldSurface);
         form.getChildren().add(surface);
@@ -92,7 +101,8 @@ public class VueModifierBien {
 
         TextField fieldNbPieces = new TextField();
         fieldNbPieces.setMinWidth(300);
-        fieldNbPieces.setText(String.valueOf(bien.getNbPieces()));
+        String nbPiecesText = bien.getNbPieces() == null ? "" : String.valueOf(bien.getNbPieces());
+        fieldNbPieces.setText(nbPiecesText);
 
         HBox nbPieces = new HBox(labelNbPieces, fieldNbPieces);
         form.getChildren().add(nbPieces);
@@ -193,8 +203,41 @@ public class VueModifierBien {
         });
 
         HBox image = new HBox(labelImage, boutonFichier, labelFichier);
-
         form.getChildren().add(image);
+
+        //proprietaire
+        Label labelProprietaire = new Label("Propriétaire : ");
+        labelProprietaire.setStyle("-fx-font: 16 arial;");
+
+        //Récupération des propriétaires
+        JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
+        List<Proprietaire> proprietaires = jpaProprietaire.findAll();
+
+        ChoiceBox selectProprietaire = new ChoiceBox();
+        selectProprietaire.setMinWidth(300);
+        for (Proprietaire proprietaire : proprietaires) {
+            selectProprietaire.getItems().add(proprietaire.getId() + "- " + proprietaire.getNoTiers().getPrenom() + " " + proprietaire.getNoTiers().getNom());
+        }
+        BienProprietaire dernierProprietaire;
+        if (bien.getBienProprietaires().stream().count() > 0) {
+            //Récupère le dernier propriétaire en date
+            dernierProprietaire = getLastElement(bien.getBienProprietaires());
+            selectProprietaire.setValue(dernierProprietaire.getProprietaire().getId() + "- " + dernierProprietaire.getProprietaire().getNoTiers().getNom() + " " + dernierProprietaire.getProprietaire().getNoTiers().getPrenom());
+        } else {
+            dernierProprietaire = null;
+        }
+        HBox proprietaire = new HBox(labelProprietaire, selectProprietaire);
+        form.getChildren().add(proprietaire);
+
+        //loué
+        Label labelLoue = new Label("Logement loué : ");
+        labelLoue.setStyle("-fx-font: 16 arial;");
+
+        CheckBox checkboxLoue = new CheckBox();
+        if (bien.getSituation() == 1) checkboxLoue.setSelected(true);
+
+        HBox loue = new HBox(labelLoue, checkboxLoue);
+        form.getChildren().add(loue);
 
         //Bouton d'ajout
         Button boutonModifier = new Button("Modifier");
@@ -218,6 +261,7 @@ public class VueModifierBien {
                 Integer noLogementValue = fieldNoLogement.getText().isEmpty() ? null : Integer.valueOf(fieldNoLogement.getText());
                 Integer etageValue = fieldEtage.getText().isEmpty() ? 0 : Integer.valueOf(fieldEtage.getText());
                 Integer nbPiecesValue = fieldNbPieces.getText().isEmpty() ? null : Integer.valueOf(fieldNbPieces.getText());
+                Integer loueValue = checkboxLoue.isSelected() ? 1 : 0;
 
                 // Mise à jour de l'objet bien
                 bien.getAdresse().setNoDansLaRue(fieldNoRue.getText());
@@ -234,6 +278,7 @@ public class VueModifierBien {
                 bien.setTypeChauffage(chauffage);
                 bien.setTypeEauChaude(eau);
                 bien.setDescription(fieldDescription.getText());
+                bien.setSituation(loueValue);
                 if (file[0] == null) {
                     bien.setImage(bien.getImage());
                 } else {
@@ -251,9 +296,31 @@ public class VueModifierBien {
                     jpaAdresse.update(adressebdd);
                 }
 
-
+                // Mise à jour du bien en bdd
                 JpaDaoBien jpaBien = new JpaDaoBien();
                 jpaBien.update(bien);
+
+                // Mise à jour éventuelle du bien_proprietaire en bdd
+                if (selectProprietaire.getValue() != null) {
+                    if (dernierProprietaire == null || (dernierProprietaire != null && Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]) != dernierProprietaire.getProprietaire().getId())) {
+
+                        //Le propriétaire a changé
+                        if (dernierProprietaire != null && Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]) != dernierProprietaire.getProprietaire().getId()) {
+                            dernierProprietaire.setDateFin(LocalDate.now());
+                            JpaDaoBienProprietaire jpaBienProprietaire = new JpaDaoBienProprietaire();
+                            jpaBienProprietaire.update(dernierProprietaire);
+                        }
+
+                        JpaDaoProprietaire jpaProprietaire2 = new JpaDaoProprietaire();
+                        Proprietaire nouveauProprietaire = jpaProprietaire2.find(Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]));
+                        BienProprietaireId bienProprietaireId = new BienProprietaireId(bien, nouveauProprietaire);
+                        BienProprietaire bienProprietaire = new BienProprietaire();
+                        bienProprietaire.setId(bienProprietaireId);
+                        bienProprietaire.setDateDebut(LocalDate.now());
+                        JpaDaoBienProprietaire jpaBienProprietaire = new JpaDaoBienProprietaire();
+                        jpaBienProprietaire.create(bienProprietaire);
+                    }
+                }
 
                 try {
                     new VueDetailsBien(stage, bien);
@@ -279,5 +346,14 @@ public class VueModifierBien {
 
     public Scene getScene() {
         return scene;
+    }
+
+    private BienProprietaire getLastElement(final Collection c) {
+        final Iterator itr = c.iterator();
+        Object lastElement = null;
+        while (itr.hasNext()) {
+            lastElement = itr.next();
+        }
+        return (BienProprietaire) lastElement;
     }
 }

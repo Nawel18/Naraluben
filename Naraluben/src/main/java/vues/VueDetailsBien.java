@@ -16,11 +16,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
 import metier.Bien;
+import metier.BienProprietaire;
 import utils.ButtonsUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class VueDetailsBien extends ScrollPane {
 
@@ -117,7 +120,15 @@ public class VueDetailsBien extends ScrollPane {
             labelSituation.setStyle("-fx-font-size: 18px; -fx-text-fill: red");
         }
         containerBien.getChildren().add(labelSituation);
-        //Donné du bien
+
+        //Données du bien
+        if (bien.getBienProprietaires().stream().count() > 0) {
+            //Récupère le dernier propriétaire en date
+            BienProprietaire dernierProprietaire = getLastElement(bien.getBienProprietaires());
+            Label labelProprietaire = createStyledLabel("Propriétaire : " + dernierProprietaire.getProprietaire().getNoTiers().getNom() + " " + dernierProprietaire.getProprietaire().getNoTiers().getPrenom(), "-fx-font: 16 arial;");
+            containerBien.getChildren().add(labelProprietaire);
+        }
+
         Label labelTitle1 = createStyledLabel("Information du Bien : ", "-fx-font-size: 28px;");
         containerBien.getChildren().add(labelTitle1);
         Label labelType;
@@ -175,6 +186,7 @@ public class VueDetailsBien extends ScrollPane {
             labelMeuble = createStyledLabel("Le logement n'est pas meublé", "-fx-font: 16 arial;");
             containerBien.getChildren().add(labelMeuble);
         }
+
         return containerBien;
     }
 
@@ -182,6 +194,15 @@ public class VueDetailsBien extends ScrollPane {
         Label label = new Label(text);
         label.setStyle(style);
         return label;
+    }
+
+    private static BienProprietaire getLastElement(final Collection c) {
+        final Iterator itr = c.iterator();
+        Object lastElement = null;
+        while (itr.hasNext()) {
+            lastElement = itr.next();
+        }
+        return (BienProprietaire) lastElement;
     }
 
 }

@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
 import metier.Bien;
+import vues.VueAjoutTiers;
 import vues.VueBiens;
 import vues.VueModifierBien;
 
@@ -47,7 +48,7 @@ public class ButtonsUtil {
                 }
             });
         });
-       
+
         return boutonSupprimer;
     }
 
@@ -62,6 +63,18 @@ public class ButtonsUtil {
         Button boutonGoBack = new Button("Modifier");
         boutonGoBack.setOnMouseClicked(event -> new VueModifierBien(stage, bien, jpaBien));
         return boutonGoBack;
+    }
+
+    public static Button createNouveauTiersButton(Stage stage, String type) {
+        Button boutonNouveauTiers = new Button("Nouveau tiers");
+        if (type == "Agent") {
+            boutonNouveauTiers.setText("Nouvel agent");
+        }
+        if (type == "Propriétaire") {
+            boutonNouveauTiers.setText("Nouveau propriétaire");
+        }
+        boutonNouveauTiers.setOnMouseClicked(event -> new VueAjoutTiers(stage, type));
+        return boutonNouveauTiers;
     }
 
     public static HBox createStyleButton(Button button, String couleur) {

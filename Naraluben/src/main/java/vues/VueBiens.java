@@ -84,14 +84,22 @@ public class VueBiens {
 
         //On redirige vers la vue VuejoutBien au click
         boutonNouveauBien.setOnMouseClicked(event -> new VueAjoutBien(this.stage));
+
         //Déconnection
-        Button boutonDeconnexion = new Button();
-        boutonDeconnexion.setText("Déconnexion");
+        Button boutonDeconnexion = new Button("Déconnexion");
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonDeconnexion, "vert");
         boutonDeconnexion.setOnMouseClicked(event -> {
             new VueConnexion(stage);
         });
-        HBox hautpage = new HBox(titre, hboxGoback);
+
+        //Utilisateurs
+        Button boutonUtilisateur = new Button("Utilisateurs");
+        HBox hboxUtilisateur = ButtonsUtil.createStyleButton(boutonUtilisateur, "vert");
+        boutonUtilisateur.setOnMouseClicked(event -> {
+            new VueTiers(stage);
+        });
+
+        HBox hautpage = new HBox(titre, hboxUtilisateur, hboxGoback);
         //On ajoute les différents éléments à la page
         Group page = new Group(hautpage, containerBiens);
         //On affiche la vue Bien

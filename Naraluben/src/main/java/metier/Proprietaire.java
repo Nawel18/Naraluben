@@ -20,6 +20,14 @@ public class Proprietaire {
     @OneToMany(mappedBy = "proprietaire")
     private Set<BienProprietaire> bienProprietaires = new LinkedHashSet<>();
 
+    public Proprietaire(Tiers noTiers) {
+        this.noTiers = noTiers;
+    }
+
+    public Proprietaire() {
+
+    }
+
     public Integer getId() {
         return id;
     }
@@ -43,5 +51,4 @@ public class Proprietaire {
     public void setBienProprietaires(Set<BienProprietaire> bienProprietaires) {
         this.bienProprietaires = bienProprietaires;
     }
-
 }

@@ -14,6 +14,14 @@ public class Agent {
     @JoinColumn(name = "no_tiers")
     private Tiers noTiers;
 
+    public Agent(Tiers noTiers) {
+        this.noTiers = noTiers;
+    }
+
+    public Agent() {
+
+    }
+
     public Integer getId() {
         return id;
     }
@@ -29,5 +37,4 @@ public class Agent {
     public void setNoTiers(Tiers noTiers) {
         this.noTiers = noTiers;
     }
-
 }

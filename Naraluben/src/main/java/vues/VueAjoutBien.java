@@ -199,17 +199,25 @@ public class VueAjoutBien {
         labelProprietaire.setStyle("-fx-font: 16 arial;");
 
         //Récupération des propriétaires
-        JpaDaoProprietaire jpa = new JpaDaoProprietaire();
-        List<Proprietaire> proprietaires = jpa.findAll();
+        JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
+        List<Proprietaire> proprietaires = jpaProprietaire.findAll();
 
         ChoiceBox selectProprietaire = new ChoiceBox();
         selectProprietaire.setMinWidth(300);
         for (Proprietaire proprietaire : proprietaires) {
             selectProprietaire.getItems().add(proprietaire.getId() + "- " + proprietaire.getNoTiers().getPrenom() + " " + proprietaire.getNoTiers().getNom());
         }
-
         HBox proprietaire = new HBox(labelProprietaire, selectProprietaire);
         form.getChildren().add(proprietaire);
+
+        //loué
+        Label labelLoue = new Label("Logement loué : ");
+        labelLoue.setStyle("-fx-font: 16 arial;");
+
+        CheckBox checkboxLoue = new CheckBox();
+
+        HBox loue = new HBox(labelLoue, checkboxLoue);
+        form.getChildren().add(loue);
 
         //Bouton d'ajout
         Button boutonNouveauBien = new Button("Ajouter");
@@ -236,10 +244,11 @@ public class VueAjoutBien {
                 Integer noLogementValue = fieldNoLogement.getText().isEmpty() ? null : Integer.valueOf(fieldNoLogement.getText());
                 Integer etageValue = fieldEtage.getText().isEmpty() ? null : Integer.valueOf(fieldEtage.getText());
                 Integer nbPiecesValue = fieldNbPieces.getText().isEmpty() ? null : Integer.valueOf(fieldNbPieces.getText());
+                Integer loueValue = checkboxLoue.isSelected() ? 1 : 0;
 
                 Bien nouveauBien = new Bien(surfaceValue, noLogementValue, etageValue,
                         type, classification, chauffage, eau,
-                        nbPiecesValue, checkboxMeuble.isSelected(), 1,
+                        nbPiecesValue, checkboxMeuble.isSelected(), loueValue,
                         fieldDescription.getText(), file[0].getName(), datePicker.getValue());
 
                 Adresse nouvelleAdresse = new Adresse(fieldNoRue.getText(), fieldRue.getText(), fieldVille.getText());
@@ -248,18 +257,11 @@ public class VueAjoutBien {
                 if (selectProprietaire.getValue() == null)
                     proprietaireChoisit = null;
                 else {
-                    JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
-                    proprietaireChoisit = jpaProprietaire.find(Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]));
+                    JpaDaoProprietaire jpaProprietaire2 = new JpaDaoProprietaire();
+                    proprietaireChoisit = jpaProprietaire2.find(Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]));
                 }
 
                 ajouterBien(nouveauBien, nouvelleAdresse, proprietaireChoisit, file[0]);
-
-                //Retour à la page liste biens
-                try {
-                    new VueBiens(this.stage);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
         });
 
@@ -305,9 +307,17 @@ public class VueAjoutBien {
             BienProprietaireId bienProprietaireId = new BienProprietaireId(bien, proprietaire);
             BienProprietaire bienProprietaire = new BienProprietaire();
             bienProprietaire.setId(bienProprietaireId);
+            bienProprietaire.setDateDebut(LocalDate.now());
 
             JpaDaoBienProprietaire jpaBienProprietaire = new JpaDaoBienProprietaire();
             jpaBienProprietaire.create(bienProprietaire);
+        }
+
+        //Retour à la page liste biens
+        try {
+            new VueBiens(this.stage);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
