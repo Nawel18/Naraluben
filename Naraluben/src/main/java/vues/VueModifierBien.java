@@ -25,14 +25,14 @@ public class VueModifierBien {
     private Stage stage;
     private Scene scene;
 
-    public VueModifierBien(Stage stage, Bien bien, JpaDaoBien jpa) {
+    public VueModifierBien(Stage stage, Bien bien, Tiers tiersConnecte) {
         this.stage = stage;
 
         //Titre de la vue
         Label titre = new Label("Modification du bien");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
 
         //Container pour le formulaire
@@ -58,7 +58,6 @@ public class VueModifierBien {
 
         HBox adresse = new HBox(labelAdresse, fieldNoRue, fieldRue, fieldVille);
         form.getChildren().add(adresse);
-
 
         //No logement
         Label labelNoLogement = new Label("N° logement : ");
@@ -89,7 +88,7 @@ public class VueModifierBien {
 
         TextField fieldSurface = new TextField();
         fieldSurface.setMinWidth(300);
-        String surfaceText = bien.getNbPieces() == null ? "" : String.valueOf(bien.getEtage());
+        String surfaceText = bien.getSurface() == null ? "" : String.valueOf(bien.getSurface());
         fieldSurface.setText(surfaceText);
 
         HBox surface = new HBox(labelSurface, fieldSurface);
@@ -156,7 +155,7 @@ public class VueModifierBien {
         ChoiceBox selectTypeChauffage = new ChoiceBox();
         selectTypeChauffage.setMinWidth(300);
         selectTypeChauffage.getItems().addAll(metier.enums.TypeChauffage.values());
-        if (bien.getTypeEauChaude() != null) selectTypeChauffage.setValue(bien.getTypeChauffage().getTypeChauffage());
+        if (bien.getTypeChauffage() != null) selectTypeChauffage.setValue(bien.getTypeChauffage().getTypeChauffage());
 
         HBox typeChauffage = new HBox(labelTypeChauffage, selectTypeChauffage);
         form.getChildren().add(typeChauffage);
@@ -206,28 +205,37 @@ public class VueModifierBien {
         form.getChildren().add(image);
 
         //proprietaire
-        Label labelProprietaire = new Label("Propriétaire : ");
-        labelProprietaire.setStyle("-fx-font: 16 arial;");
-
-        //Récupération des propriétaires
+        //test si l'utilisateur connecté est un proprietaire
         JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
-        List<Proprietaire> proprietaires = jpaProprietaire.findAll();
+        Proprietaire proprietaireConnecte = jpaProprietaire.findByNoTiers(tiersConnecte.getId());
 
         ChoiceBox selectProprietaire = new ChoiceBox();
-        selectProprietaire.setMinWidth(300);
-        for (Proprietaire proprietaire : proprietaires) {
-            selectProprietaire.getItems().add(proprietaire.getId() + "- " + proprietaire.getNoTiers().getPrenom() + " " + proprietaire.getNoTiers().getNom());
-        }
         BienProprietaire dernierProprietaire;
-        if (bien.getBienProprietaires().stream().count() > 0) {
-            //Récupère le dernier propriétaire en date
-            dernierProprietaire = getLastElement(bien.getBienProprietaires());
-            selectProprietaire.setValue(dernierProprietaire.getProprietaire().getId() + "- " + dernierProprietaire.getProprietaire().getNoTiers().getNom() + " " + dernierProprietaire.getProprietaire().getNoTiers().getPrenom());
+
+        if (proprietaireConnecte == null) {
+
+            Label labelProprietaire = new Label("Propriétaire : ");
+            labelProprietaire.setStyle("-fx-font: 16 arial;");
+            //Récupération des propriétaires
+            //JpaDaoProprietaire jpaProprietaire = new JpaDaoProprietaire();
+            List<Proprietaire> proprietaires = jpaProprietaire.findAll();
+
+            selectProprietaire.setMinWidth(300);
+            for (Proprietaire proprietaire : proprietaires) {
+                selectProprietaire.getItems().add(proprietaire.getId() + "- " + proprietaire.getNoTiers().getPrenom() + " " + proprietaire.getNoTiers().getNom());
+            }
+            if (bien.getBienProprietaires().stream().count() > 0) {
+                //Récupère le dernier propriétaire en date
+                dernierProprietaire = getLastProprietaire(bien.getBienProprietaires());
+                selectProprietaire.setValue(dernierProprietaire.getProprietaire().getId() + "- " + dernierProprietaire.getProprietaire().getNoTiers().getNom() + " " + dernierProprietaire.getProprietaire().getNoTiers().getPrenom());
+            } else {
+                dernierProprietaire = null;
+            }
+            HBox proprietaire = new HBox(labelProprietaire, selectProprietaire);
+            form.getChildren().add(proprietaire);
         } else {
             dernierProprietaire = null;
         }
-        HBox proprietaire = new HBox(labelProprietaire, selectProprietaire);
-        form.getChildren().add(proprietaire);
 
         //loué
         Label labelLoue = new Label("Logement loué : ");
@@ -323,13 +331,12 @@ public class VueModifierBien {
                 }
 
                 try {
-                    new VueDetailsBien(stage, bien);
+                    new VueDetailsBien(stage, bien, tiersConnecte);
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
-
 
         HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifier, "vert");
 
@@ -343,17 +350,21 @@ public class VueModifierBien {
         this.stage.setScene(this.scene);
     }
 
-
-    public Scene getScene() {
-        return scene;
-    }
-
-    private BienProprietaire getLastElement(final Collection c) {
+    private static BienProprietaire getLastProprietaire(final Collection c) {
         final Iterator itr = c.iterator();
         Object lastElement = null;
         while (itr.hasNext()) {
             lastElement = itr.next();
+
+            BienProprietaire bienProprietaire = (BienProprietaire) lastElement;
+            if (bienProprietaire.getDateFin() == null) {
+                return (BienProprietaire) lastElement;
+            }
         }
         return (BienProprietaire) lastElement;
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }

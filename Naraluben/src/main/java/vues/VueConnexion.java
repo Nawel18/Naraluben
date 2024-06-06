@@ -53,12 +53,12 @@ public class VueConnexion {
 
 
         connexion.setOnMouseClicked(event -> {
-            Tiers foundTiers = tiers.findByEmailAndPassword(fieldEmail.getText(), fieldPassword.getText());
+            Tiers tiersConnecte = tiers.findByEmailAndPassword(fieldEmail.getText(), fieldPassword.getText());
 
-            if (foundTiers != null) {
+            if (tiersConnecte != null) {
                 //faire la condition de connexion
                 try {
-                    new VueBiens(stage);
+                    new VueBiens(stage, tiersConnecte);
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }

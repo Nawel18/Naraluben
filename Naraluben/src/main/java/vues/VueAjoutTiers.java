@@ -24,7 +24,7 @@ public class VueAjoutTiers {
     private Stage stage;
     private Scene scene;
 
-    public VueAjoutTiers(Stage stage, String type) {
+    public VueAjoutTiers(Stage stage, String type, Tiers tiersConnecte) {
         this.stage = stage;
 
         //Titre de la vue
@@ -36,7 +36,7 @@ public class VueAjoutTiers {
         if (type == "Propriétaire")
             titre.setText("Nouveau Propriétaire");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
         VBox containerGoback = new VBox();
         containerGoback.setSpacing(15);
@@ -143,7 +143,7 @@ public class VueAjoutTiers {
 
                 Tiers nouveauTiers = new Tiers(nomValue, prenomValue, datePicker.getValue(), noSsValue, ribValue, mdpValue, emailValue);
 
-                ajouterTier(nouveauTiers, type);
+                ajouterTier(nouveauTiers, type, tiersConnecte);
             }
         });
 
@@ -157,7 +157,7 @@ public class VueAjoutTiers {
         this.stage.setScene(this.scene);
     }
 
-    public void ajouterTier(Tiers tiers, String type) {
+    public void ajouterTier(Tiers tiers, String type, Tiers tiersConnecte) {
 
         //création du tier en bdd
         JpaDaoTiers jpaTiers = new JpaDaoTiers();
@@ -176,6 +176,6 @@ public class VueAjoutTiers {
             jpaProprietaire.create(proprietaire);
         }
 
-        new VueTiers(this.stage);
+        new VueTiers(this.stage, tiersConnecte);
     }
 }

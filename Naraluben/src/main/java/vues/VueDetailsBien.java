@@ -14,9 +14,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import jpaDao.JpaDaoAgent;
 import jpaDao.JpaDaoBien;
+import metier.Agent;
 import metier.Bien;
 import metier.BienProprietaire;
+import metier.Tiers;
 import utils.ButtonsUtil;
 
 import java.io.FileInputStream;
@@ -29,7 +32,7 @@ public class VueDetailsBien extends ScrollPane {
 
     private Scene scene;
 
-    public VueDetailsBien(Stage stage, Bien bien) throws FileNotFoundException {
+    public VueDetailsBien(Stage stage, Bien bien, Tiers tiersConnecte) throws FileNotFoundException {
         //Récupération des biens
         JpaDaoBien jpa = new JpaDaoBien();
         bien = jpa.find(bien.getId());
@@ -60,17 +63,25 @@ public class VueDetailsBien extends ScrollPane {
         imageView.setFitHeight(500); // Hauteur fixe
         imageView.setPreserveRatio(true);
         containerImage.getChildren().add(imageView);
-        // Utilisation pour créer le bouton de suppression
-        Button boutonSupprimer = ButtonsUtil.createDeleteButton(jpa, bien, stage);
 
         // Utilisation pour créer le bouton de retour
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(stage);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(stage, tiersConnecte);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
 
-        HBox hboxSupprimer = ButtonsUtil.createStyleButton(boutonSupprimer, "rouge");
-        hboxSupprimer.setStyle("-fx-alignment: center-left; -fx-padding: 15;");
+        // Test si l'utilisateur connecté est un agent
+        // Utilisation pour créer le bouton de suppression
+        JpaDaoAgent jpaAgent = new JpaDaoAgent();
+        Agent agent = jpaAgent.findByNoTiers(tiersConnecte.getId());
+
+        HBox hboxSupprimer = new HBox();
+        if (agent != null) {
+            Button boutonSupprimer = ButtonsUtil.createDeleteButton(jpa, bien, stage, tiersConnecte);
+            hboxSupprimer.getChildren().add(ButtonsUtil.createStyleButton(boutonSupprimer, "rouge"));
+            hboxSupprimer.setStyle("-fx-alignment: center-left; -fx-padding: 15;");
+        }
+
         // Utilisation pour créer le bouton de retour
-        Button boutonModifierBien = ButtonsUtil.createModifierBouttonButton(stage, bien, jpa);
+        Button boutonModifierBien = ButtonsUtil.createModifierBouttonButton(stage, bien, tiersConnecte);
         HBox hboxModifier = ButtonsUtil.createStyleButton(boutonModifierBien, "vert");
 
         containerGoback.getChildren().add(boutonGoBack);
@@ -88,7 +99,6 @@ public class VueDetailsBien extends ScrollPane {
         container.setBackground(Background.fill(Color.web("#FFFFFF")));
 
         //création de la scène
-
         ScrollPane scroll = new ScrollPane();
         scroll.setContent(container);
         scroll.setFitToWidth(true);
@@ -123,7 +133,7 @@ public class VueDetailsBien extends ScrollPane {
         //Données du bien
         if (bien.getBienProprietaires().stream().count() > 0) {
             //Récupère le dernier propriétaire en date
-            BienProprietaire dernierProprietaire = getLastElement(bien.getBienProprietaires());
+            BienProprietaire dernierProprietaire = getLastProprietaire(bien.getBienProprietaires());
             Label labelProprietaire = createStyledLabel("Propriétaire : " + dernierProprietaire.getProprietaire().getNoTiers().getNom() + " " + dernierProprietaire.getProprietaire().getNoTiers().getPrenom(), "-fx-font: 16 arial;");
             containerBien.getChildren().add(labelProprietaire);
         }
@@ -195,11 +205,16 @@ public class VueDetailsBien extends ScrollPane {
         return label;
     }
 
-    private static BienProprietaire getLastElement(final Collection c) {
+    private static BienProprietaire getLastProprietaire(final Collection c) {
         final Iterator itr = c.iterator();
         Object lastElement = null;
         while (itr.hasNext()) {
             lastElement = itr.next();
+
+            BienProprietaire bienProprietaire = (BienProprietaire) lastElement;
+            if (bienProprietaire.getDateFin() == null) {
+                return (BienProprietaire) lastElement;
+            }
         }
         return (BienProprietaire) lastElement;
     }

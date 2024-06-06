@@ -24,14 +24,14 @@ public class VueTiers {
     private Stage stage;
     private Scene scene;
 
-    public VueTiers(Stage stage) {
+    public VueTiers(Stage stage, Tiers tiersConnecte) {
         this.stage = stage;
 
         //Titre de la vue
         Label titre = new Label("Utilisateurs");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
         VBox containerGoback = new VBox();
         containerGoback.setSpacing(15);
@@ -85,7 +85,7 @@ public class VueTiers {
         tableAgents.setItems(listeAgents);
         tableAgents.getColumns().addAll(colonneNumero, colonneNom, colonnePrenom, colonneNaissance, colonneSecurite, colonneRib, colonneEmail);
 
-        Button boutonNouvelAgent = ButtonsUtil.createNouveauTiersButton(this.stage, "Agent");
+        Button boutonNouvelAgent = ButtonsUtil.createNouveauTiersButton(this.stage, "Agent", tiersConnecte);
         HBox hboxNouvelAgent = ButtonsUtil.createStyleButton(boutonNouvelAgent, "vert");
 
         //Récupération des proprietaires
@@ -137,7 +137,7 @@ public class VueTiers {
         tableProprietaires.setItems(listeProprietaires);
         tableProprietaires.getColumns().addAll(colonneNumero1, colonneNom1, colonnePrenom1, colonneNaissance1, colonneSecurite1, colonneRib1, colonneEmail1);
 
-        Button boutonNouveauProprietaire = ButtonsUtil.createNouveauTiersButton(this.stage, "Propriétaire");
+        Button boutonNouveauProprietaire = ButtonsUtil.createNouveauTiersButton(this.stage, "Propriétaire", tiersConnecte);
         HBox hboxNouveauProprietaire = ButtonsUtil.createStyleButton(boutonNouveauProprietaire, "vert");
 
         VBox containerTable = new VBox(titreAgents, tableAgents, hboxNouvelAgent, titreProprietaires, tableProprietaires, hboxNouveauProprietaire);

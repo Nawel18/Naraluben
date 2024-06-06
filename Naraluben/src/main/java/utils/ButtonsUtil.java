@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
 import metier.Bien;
+import metier.Tiers;
 import vues.VueAjoutTiers;
 import vues.VueBiens;
 import vues.VueModifierBien;
@@ -16,16 +17,16 @@ import java.util.Objects;
 
 public class ButtonsUtil {
     // Méthode pour rediriger vers VueBiens
-    public static void redirectVueBiens(Stage stage) {
+    public static void redirectVueBiens(Stage stage, Tiers tiers) {
         try {
-            new VueBiens(stage);
+            new VueBiens(stage, tiers);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     // Création du bouton de suppression
-    public static Button createDeleteButton(JpaDaoBien jpa, Bien bien, Stage stage) {
+    public static Button createDeleteButton(JpaDaoBien jpa, Bien bien, Stage stage, Tiers tiersConnecte) {
         Button boutonSupprimer = new Button("Supprimer");
         boutonSupprimer.setOnAction(e -> {
             // Afficher une boîte de dialogue de confirmation
@@ -40,7 +41,7 @@ public class ButtonsUtil {
                     // Code à exécuter si l'utilisateur confirme
                     //System.out.println("Action exécutée !");
                     jpa.delete(bien);
-                    redirectVueBiens(stage);
+                    redirectVueBiens(stage, tiersConnecte);
 
                 } else {
                     // Code à exécuter si l'utilisateur annule
@@ -53,19 +54,19 @@ public class ButtonsUtil {
     }
 
     // Création du boutton de retour
-    public static Button createGoBackButton(Stage stage) {
+    public static Button createGoBackButton(Stage stage, Tiers tiersConnecte) {
         Button boutonGoBack = new Button("Retour");
-        boutonGoBack.setOnMouseClicked(event -> redirectVueBiens(stage));
+        boutonGoBack.setOnMouseClicked(event -> redirectVueBiens(stage, tiersConnecte));
         return boutonGoBack;
     }
 
-    public static Button createModifierBouttonButton(Stage stage, Bien bien, JpaDaoBien jpaBien) {
+    public static Button createModifierBouttonButton(Stage stage, Bien bien, Tiers tiers) {
         Button boutonGoBack = new Button("Modifier");
-        boutonGoBack.setOnMouseClicked(event -> new VueModifierBien(stage, bien, jpaBien));
+        boutonGoBack.setOnMouseClicked(event -> new VueModifierBien(stage, bien, tiers));
         return boutonGoBack;
     }
 
-    public static Button createNouveauTiersButton(Stage stage, String type) {
+    public static Button createNouveauTiersButton(Stage stage, String type, Tiers tiers) {
         Button boutonNouveauTiers = new Button("Nouveau tiers");
         if (type == "Agent") {
             boutonNouveauTiers.setText("Nouvel agent");
@@ -73,7 +74,7 @@ public class ButtonsUtil {
         if (type == "Propriétaire") {
             boutonNouveauTiers.setText("Nouveau propriétaire");
         }
-        boutonNouveauTiers.setOnMouseClicked(event -> new VueAjoutTiers(stage, type));
+        boutonNouveauTiers.setOnMouseClicked(event -> new VueAjoutTiers(stage, type, tiers));
         return boutonNouveauTiers;
     }
 

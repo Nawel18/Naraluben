@@ -26,14 +26,14 @@ public class VueAjoutBien {
     private Stage stage;
     private Scene scene;
 
-    public VueAjoutBien(Stage stage) {
+    public VueAjoutBien(Stage stage, Tiers tiersConnecte) {
         this.stage = stage;
 
         //Titre de la vue
         Label titre = new Label("Nouveau bien");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
         VBox containerGoback = new VBox();
         containerGoback.setSpacing(15);
@@ -261,7 +261,7 @@ public class VueAjoutBien {
                     proprietaireChoisit = jpaProprietaire2.find(Integer.parseInt(selectProprietaire.getValue().toString().split("-")[0]));
                 }
 
-                ajouterBien(nouveauBien, nouvelleAdresse, proprietaireChoisit, file[0]);
+                ajouterBien(nouveauBien, nouvelleAdresse, proprietaireChoisit, file[0], tiersConnecte);
             }
         });
 
@@ -275,7 +275,7 @@ public class VueAjoutBien {
         this.stage.setScene(this.scene);
     }
 
-    private void ajouterBien(Bien bien, Adresse adresse, Proprietaire proprietaire, File image) {
+    private void ajouterBien(Bien bien, Adresse adresse, Proprietaire proprietaire, File image, Tiers tiersConnecte) {
 
         //copie de l'image
         image = ButtonsUtil.copyImage(image);
@@ -315,7 +315,7 @@ public class VueAjoutBien {
 
         //Retour à la page liste biens
         try {
-            new VueBiens(this.stage);
+            new VueBiens(this.stage, tiersConnecte);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
