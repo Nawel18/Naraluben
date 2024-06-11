@@ -1,7 +1,9 @@
 package metier;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
@@ -10,25 +12,37 @@ import java.util.Objects;
 @Embeddable
 public class BienProprietaireId implements Serializable {
     private static final long serialVersionUID = 5004947822491207126L;
-    @Column(name = "bien", nullable = false)
-    private Integer bien;
 
-    @Column(name = "proprietaire", nullable = false)
-    private Integer proprietaire;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "bien", nullable = false)
+    private Bien bien;
 
-    public Integer getBien() {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "proprietaire", nullable = false)
+    private Proprietaire proprietaire;
+
+    public BienProprietaireId(Bien bien, Proprietaire proprietaire) {
+        this.bien = bien;
+        this.proprietaire = proprietaire;
+    }
+
+    public BienProprietaireId() {
+
+    }
+
+    public Bien getBien() {
         return bien;
     }
 
-    public void setBien(Integer bien) {
+    public void setBien(Bien bien) {
         this.bien = bien;
     }
 
-    public Integer getProprietaire() {
+    public Proprietaire getProprietaire() {
         return proprietaire;
     }
 
-    public void setProprietaire(Integer proprietaire) {
+    public void setProprietaire(Proprietaire proprietaire) {
         this.proprietaire = proprietaire;
     }
 
@@ -45,5 +59,4 @@ public class BienProprietaireId implements Serializable {
     public int hashCode() {
         return Objects.hash(proprietaire, bien);
     }
-
 }

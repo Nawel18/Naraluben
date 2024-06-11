@@ -1,33 +1,38 @@
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
-import metier.Adresse;
+import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import vues.VueConnexion;
 
-public class Main {
+public class Main extends Application {
+
     public static void main(String[] args) {
-        //BDD 2
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        //création d'une adresse
-        try {
-            transaction.begin();
-            Adresse adresse = new Adresse();
-            adresse.setNoDansLaRue("19");
-            adresse.setNomRue("Faux Puits");
-            entityManager.persist(adresse);
-            transaction.commit();
-            System.out.println("Une adresse est crée " +adresse.getId());
-        }catch (Exception e){
-            System.out.println("Exception : "+ e.getMessage());
-        }finally {
-            if(transaction.isActive()){
-                transaction.rollback();
-            }
-        }
-        //rechercher un  type tier
-        entityManager.close();
-        entityManagerFactory.close();
+        launch();
     }
+
+    @Override
+    public void start(Stage stage) {
+
+        /*
+        JpaDaoAdresse jpa = new JpaDaoAdresse();
+        Adresse adresse = jpa.find(1);
+
+        System.out.println("Adresse : " + adresse.getId());
+         */
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        // Définir la taille du Stage en fonction des dimensions de l'écran
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
+        stage.setWidth(screenBounds.getWidth());
+        stage.setHeight(screenBounds.getHeight());
+
+        // Page d'accueil -> Connexio
+
+        VueConnexion connexion = new VueConnexion(stage);
+        stage.setTitle("Naraluben");
+        stage.show();
+    }
+
 }

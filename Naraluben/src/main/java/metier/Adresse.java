@@ -25,6 +25,15 @@ public class Adresse {
     @OneToMany(mappedBy = "adresse")
     private Set<Bien> biens = new LinkedHashSet<>();
 
+    public Adresse(String noDansLaRue, String nomRue, String ville) {
+        this.noDansLaRue = noDansLaRue;
+        this.nomRue = nomRue;
+        this.ville = ville;
+    }
+
+    public Adresse() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -64,5 +73,4 @@ public class Adresse {
     public void setBiens(Set<Bien> biens) {
         this.biens = biens;
     }
-
 }

@@ -10,6 +10,7 @@ import java.util.Set;
 @Table(name = "bien")
 public class Bien {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no_bien", nullable = false)
     private Integer id;
 
@@ -54,6 +55,12 @@ public class Bien {
     @Column(name = "situation")
     private Integer situation;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "image")
+    private String image;
+
     @OneToMany(mappedBy = "bien")
     private Set<Annexe> annexes = new LinkedHashSet<>();
 
@@ -65,6 +72,25 @@ public class Bien {
 
     @OneToMany(mappedBy = "bien")
     private Set<Piece> pieces = new LinkedHashSet<>();
+
+    public Bien(Integer surface, Integer noLogement, Integer etage, TypeBien typeBien, ClassificationBien classificationBien, TypeChauffage typeChauffage, TypeEauChaude typeEauChaude, Integer nbPieces, Boolean meuble, Integer situation, String description, String image, LocalDate date) {
+        this.surface = surface;
+        this.noLogement = noLogement;
+        this.etage = etage;
+        this.typeBien = typeBien;
+        this.classificationBien = classificationBien;
+        this.typeChauffage = typeChauffage;
+        this.typeEauChaude = typeEauChaude;
+        this.nbPieces = nbPieces;
+        this.meuble = meuble;
+        this.situation = situation;
+        this.description = description;
+        this.image = image;
+        this.dateCreation = date;
+    }
+
+    public Bien() {
+    }
 
     public Integer getId() {
         return id;
@@ -202,4 +228,44 @@ public class Bien {
         this.pieces = pieces;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Bien{" +
+                "id=" + id +
+                ", surface=" + surface +
+                ", adresse=" + adresse +
+                ", noLogement=" + noLogement +
+                ", etage=" + etage +
+                ", dateCreation=" + dateCreation +
+                ", typeBien=" + typeBien +
+                ", classificationBien=" + classificationBien +
+                ", typeChauffage=" + typeChauffage +
+                ", typeEauChaude=" + typeEauChaude +
+                ", nbPieces=" + nbPieces +
+                ", meuble=" + meuble +
+                ", situation=" + situation +
+                ", description='" + description + '\'' +
+                ", image='" + image + '\'' +
+                ", annexes=" + annexes +
+                ", bails=" + bails +
+                ", bienProprietaires=" + bienProprietaires +
+                ", pieces=" + pieces +
+                '}';
+    }
 }

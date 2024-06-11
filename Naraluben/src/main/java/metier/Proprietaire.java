@@ -15,10 +15,18 @@ public class Proprietaire {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "no_tiers")
-    private Tier noTiers;
+    private Tiers noTiers;
 
     @OneToMany(mappedBy = "proprietaire")
     private Set<BienProprietaire> bienProprietaires = new LinkedHashSet<>();
+
+    public Proprietaire(Tiers noTiers) {
+        this.noTiers = noTiers;
+    }
+
+    public Proprietaire() {
+
+    }
 
     public Integer getId() {
         return id;
@@ -28,11 +36,11 @@ public class Proprietaire {
         this.id = id;
     }
 
-    public Tier getNoTiers() {
+    public Tiers getNoTiers() {
         return noTiers;
     }
 
-    public void setNoTiers(Tier noTiers) {
+    public void setNoTiers(Tiers noTiers) {
         this.noTiers = noTiers;
     }
 
@@ -43,5 +51,4 @@ public class Proprietaire {
     public void setBienProprietaires(Set<BienProprietaire> bienProprietaires) {
         this.bienProprietaires = bienProprietaires;
     }
-
 }

@@ -12,7 +12,15 @@ public class Agent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "no_tiers")
-    private Tier noTiers;
+    private Tiers noTiers;
+
+    public Agent(Tiers noTiers) {
+        this.noTiers = noTiers;
+    }
+
+    public Agent() {
+
+    }
 
     public Integer getId() {
         return id;
@@ -22,12 +30,11 @@ public class Agent {
         this.id = id;
     }
 
-    public Tier getNoTiers() {
+    public Tiers getNoTiers() {
         return noTiers;
     }
 
-    public void setNoTiers(Tier noTiers) {
+    public void setNoTiers(Tiers noTiers) {
         this.noTiers = noTiers;
     }
-
 }

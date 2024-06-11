@@ -19,7 +19,7 @@ public class Signature {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "signataire")
-    private Tier signataire;
+    private Tiers signataire;
 
     @ManyToMany(mappedBy = "signatures")
     private Set<Bail> bails = new LinkedHashSet<>();
@@ -40,11 +40,11 @@ public class Signature {
         this.dateSignature = dateSignature;
     }
 
-    public Tier getSignataire() {
+    public Tiers getSignataire() {
         return signataire;
     }
 
-    public void setSignataire(Tier signataire) {
+    public void setSignataire(Tiers signataire) {
         this.signataire = signataire;
     }
 
