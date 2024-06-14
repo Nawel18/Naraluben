@@ -6,13 +6,16 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
+import jpaDao.JpaDaoBienProprietaire;
 import metier.Bien;
+import metier.BienProprietaire;
 import metier.Tiers;
 import vues.VueAjoutTiers;
 import vues.VueBiens;
 import vues.VueModifierBien;
 
 import java.io.*;
+import java.util.List;
 import java.util.Objects;
 
 public class ButtonsUtil {
@@ -38,14 +41,18 @@ public class ButtonsUtil {
             // Attendre la réponse de l'utilisateur
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    // Code à exécuter si l'utilisateur confirme
-                    //System.out.println("Action exécutée !");
-                    jpa.delete(bien);
+                    JpaDaoBienProprietaire jpaDaoBienProprietaire = new JpaDaoBienProprietaire();
+                    List<BienProprietaire> bienProprietaireList = jpaDaoBienProprietaire.findAllBienProprioByBien(bien);
+                    if (bienProprietaireList != null) {
+                        for (BienProprietaire selectBien : bienProprietaireList) {
+                            jpaDaoBienProprietaire.delete(selectBien);
+                        }
+                    }
+                    JpaDaoBien jpaDaoBien = new JpaDaoBien();
+                    Bien bien2 = jpaDaoBien.find(Bien.class, bien.getId());
+                    jpaDaoBien.delete(bien2);
                     redirectVueBiens(stage, tiersConnecte);
 
-                } else {
-                    // Code à exécuter si l'utilisateur annule
-                    //System.out.println("Action annulée !");
                 }
             });
         });

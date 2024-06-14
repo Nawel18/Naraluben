@@ -9,9 +9,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import jpaDao.JpaDaoAgent;
+import jpaDao.JpaDaoBienProprietaire;
 import jpaDao.JpaDaoProprietaire;
+import jpaDao.JpaDaoTiers;
 import metier.Agent;
+import metier.BienProprietaire;
 import metier.Proprietaire;
 import metier.Tiers;
 import utils.ButtonsUtil;
@@ -82,8 +86,67 @@ public class VueTiers {
         colonneEmail.setCellValueFactory(new PropertyValueFactory<Tiers, String>("email"));
         tableAgents.resizeColumn(colonneEmail, 110);
 
+        TableColumn colonneSupprimer = new TableColumn("Supprimer");
+        Callback<TableColumn<Tiers, Void>, TableCell<Tiers, Void>> cellFactory = new Callback<TableColumn<Tiers, Void>, TableCell<Tiers, Void>>() {
+            @Override
+            public TableCell<Tiers, Void> call(final TableColumn<Tiers, Void> param) {
+                final TableCell<Tiers, Void> cell = new TableCell<Tiers, Void>() {
+
+                    private final Button btn = new Button("Supprimer");
+
+                    {
+
+                        btn.setOnAction((event) -> {
+                            // Afficher une boîte de dialogue de confirmation
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle("Confirmation");
+                            alert.setHeaderText("Voulez-vous vraiment Supprimer cet agent?");
+                            alert.setContentText("Cliquez sur OK pour confirmer.");
+
+                            // Attendre la réponse de l'utilisateur
+                            alert.showAndWait().ifPresent(response -> {
+                                Tiers tier = getTableView().getItems().get(getIndex());
+
+                                if (tier != null) {
+                                    JpaDaoAgent jpaagent = new JpaDaoAgent();
+                                    Agent agent = jpaagent.findByNoTiers(tier.getId());
+                                    if (agent != null) {
+                                        jpaagent.delete(agent);
+
+                                        JpaDaoTiers jpatiers = new JpaDaoTiers();
+
+                                        Tiers tier2 = jpatiers.find(Tiers.class, tier.getId());
+                                        if (tier2 != null) {
+                                            jpatiers.delete(tier2);
+                                        }
+                                        new VueTiers(stage, tiersConnecte);
+                                    }
+                                }
+                            });
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        colonneSupprimer.setCellFactory(cellFactory);
+
+
+        tableAgents.resizeColumn(colonneSupprimer, 110);
+
         tableAgents.setItems(listeAgents);
-        tableAgents.getColumns().addAll(colonneNumero, colonneNom, colonnePrenom, colonneNaissance, colonneSecurite, colonneRib, colonneEmail);
+        tableAgents.getColumns().addAll(colonneNumero, colonneNom, colonnePrenom, colonneNaissance, colonneSecurite, colonneRib, colonneEmail, colonneSupprimer);
 
         Button boutonNouvelAgent = ButtonsUtil.createNouveauTiersButton(this.stage, "Agent", tiersConnecte);
         HBox hboxNouvelAgent = ButtonsUtil.createStyleButton(boutonNouvelAgent, "vert");
@@ -134,8 +197,75 @@ public class VueTiers {
         colonneEmail1.setCellValueFactory(new PropertyValueFactory<Tiers, String>("email"));
         tableProprietaires.resizeColumn(colonneEmail1, 110);
 
+        TableColumn colonneSupprimer2 = new TableColumn("Supprimer");
+        Callback<TableColumn<Tiers, Void>, TableCell<Tiers, Void>> cellFactory2 = new Callback<TableColumn<Tiers, Void>, TableCell<Tiers, Void>>() {
+            @Override
+            public TableCell<Tiers, Void> call(final TableColumn<Tiers, Void> param) {
+                final TableCell<Tiers, Void> cell = new TableCell<Tiers, Void>() {
+
+                    private final Button btn = new Button("Supprimer");
+
+                    {
+                        btn.setOnAction((event) -> {
+                            // Afficher une boîte de dialogue de confirmation
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle("Confirmation");
+                            alert.setHeaderText("Voulez-vous vraiment Supprimer cet agent?");
+                            alert.setContentText("Cliquez sur OK pour confirmer.");
+
+                            // Attendre la réponse de l'utilisateur
+                            alert.showAndWait().ifPresent(response -> {
+                                Tiers tier = getTableView().getItems().get(getIndex());
+                                if (tier != null) {
+
+                                    Proprietaire proprietaire = jpaProprietaire.findByNoTiers(tier.getId());
+
+                                    if (proprietaire != null) {
+                                        JpaDaoBienProprietaire jpaBienProprietaire = new JpaDaoBienProprietaire();
+                                        List<BienProprietaire> bienProprietaire = jpaBienProprietaire.findAllBienProprioByProprietaire(proprietaire);
+                                        if (bienProprietaire != null) {
+                                            for (BienProprietaire selectBien : bienProprietaire) {
+                                                if (selectBien != null) {
+                                                    jpaBienProprietaire.delete(selectBien);
+                                                }
+                                            }
+                                        }
+                                        JpaDaoProprietaire jpaProprietaire2 = new JpaDaoProprietaire();
+                                        Proprietaire proprietaire2 = jpaProprietaire2.findByNoTiers(tier.getId());
+                                        jpaProprietaire2.delete(proprietaire2);
+
+                                    }
+
+                                    JpaDaoTiers jpatiers = new JpaDaoTiers();
+                                    Tiers tier2 = jpatiers.find(Tiers.class, tier.getId());
+                                    jpatiers.delete(tier2);
+                                    new VueTiers(stage, tiersConnecte);
+                                }
+                            });
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        colonneSupprimer2.setCellFactory(cellFactory2);
+
+
+        tableProprietaires.resizeColumn(colonneSupprimer2, 110);
         tableProprietaires.setItems(listeProprietaires);
-        tableProprietaires.getColumns().addAll(colonneNumero1, colonneNom1, colonnePrenom1, colonneNaissance1, colonneSecurite1, colonneRib1, colonneEmail1);
+        tableProprietaires.getColumns().addAll(colonneNumero1, colonneNom1, colonnePrenom1, colonneNaissance1, colonneSecurite1, colonneRib1, colonneEmail1, colonneSupprimer2);
+
 
         Button boutonNouveauProprietaire = ButtonsUtil.createNouveauTiersButton(this.stage, "Propriétaire", tiersConnecte);
         HBox hboxNouveauProprietaire = ButtonsUtil.createStyleButton(boutonNouveauProprietaire, "vert");

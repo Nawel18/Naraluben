@@ -102,7 +102,7 @@ public class VueAjoutTiers {
         Label labelMdp = new Label("Mot de passe : ");
         labelMdp.setStyle("-fx-font: 16 arial;");
 
-        TextField fieldMdp = new TextField();
+        PasswordField fieldMdp = new PasswordField();
         fieldMdp.setMinWidth(300);
 
         HBox mdp = new HBox(labelMdp, fieldMdp);
