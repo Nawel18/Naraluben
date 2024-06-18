@@ -38,7 +38,7 @@ public class VueAjoutTiers {
         if (type == "Propriétaire")
             titre.setText("Nouveau Propriétaire");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte, popup);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
         VBox containerGoback = new VBox();
         containerGoback.setSpacing(15);

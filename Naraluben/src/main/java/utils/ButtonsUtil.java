@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import jpaDao.JpaDaoBien;
 import metier.Bien;
@@ -38,7 +39,7 @@ public class ButtonsUtil {
             // Attendre la réponse de l'utilisateur
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                  
+
                     JpaDaoBien jpaDaoBien = new JpaDaoBien();
                     Bien bien2 = jpaDaoBien.find(Bien.class, bien.getId());
                     jpaDaoBien.delete(bien2);
@@ -52,9 +53,12 @@ public class ButtonsUtil {
     }
 
     // Création du boutton de retour
-    public static Button createGoBackButton(Stage stage, Tiers tiersConnecte) {
+    public static Button createGoBackButton(Stage stage, Tiers tiersConnecte, Popup popup) {
         Button boutonGoBack = new Button("Retour");
-        boutonGoBack.setOnMouseClicked(event -> redirectVueBiens(stage, tiersConnecte));
+        boutonGoBack.setOnMouseClicked(event -> {
+            redirectVueBiens(stage, tiersConnecte);
+            if (popup != null) popup.hide();
+        });
         return boutonGoBack;
     }
 

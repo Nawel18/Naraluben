@@ -65,7 +65,7 @@ public class VueDetailsBien extends ScrollPane {
         containerImage.getChildren().add(imageView);
 
         // Utilisation pour créer le bouton de retour
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(stage, tiersConnecte);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(stage, tiersConnecte, null);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
 
         // Test si l'utilisateur connecté est un agent

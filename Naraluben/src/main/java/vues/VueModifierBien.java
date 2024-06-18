@@ -27,6 +27,7 @@ public class VueModifierBien {
 
     public VueModifierBien(Stage stage, Bien bien, Tiers tiersConnecte) {
         this.stage = stage;
+        Popup popup = new Popup();
 
         //Titre de la vue
         Label titre = new Label("Modification du bien");
@@ -35,6 +36,7 @@ public class VueModifierBien {
         Button boutonGoBack = new Button("Retour");
         boutonGoBack.setOnMouseClicked(event -> {
             try {
+                popup.hide();
                 new VueDetailsBien(stage, bien, tiersConnecte);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
@@ -260,7 +262,7 @@ public class VueModifierBien {
 
         boutonModifier.setOnMouseClicked(event -> {
             if (fieldNoRue.getText().isEmpty() || fieldRue.getText().isEmpty() || fieldVille.getText().isEmpty()) {
-                Popup popup = new Popup();
+
                 Label labelError = new Label("Merci de compléter l'adresse et de choisir une image");
                 labelError.setStyle(" -fx-background-color: #de6767;-fx-padding: 10");
                 popup.getContent().add(labelError);
@@ -342,6 +344,7 @@ public class VueModifierBien {
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+                popup.hide();
             }
         });
 

@@ -35,7 +35,7 @@ public class VueTiers {
         Label titre = new Label("Utilisateurs");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
+        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte, null);
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
         VBox containerGoback = new VBox();
         containerGoback.setSpacing(15);
