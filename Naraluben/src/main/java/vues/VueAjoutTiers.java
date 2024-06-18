@@ -24,6 +24,8 @@ public class VueAjoutTiers {
     private Stage stage;
     private Scene scene;
 
+    private Popup popup = new Popup();
+
     public VueAjoutTiers(Stage stage, String type, Tiers tiersConnecte) {
         this.stage = stage;
 
@@ -51,17 +53,17 @@ public class VueAjoutTiers {
         form.setSpacing(15);
 
         //Nom
-        Label labelNom = new Label("Nom : ");
+        Label labelNom = new Label("Nom :                                    ");
         labelNom.setStyle("-fx-font: 16 arial;");
 
         TextField fieldNom = new TextField();
-        fieldNom.setMinWidth(20);
+        fieldNom.setMinWidth(300);
 
         HBox nom = new HBox(labelNom, fieldNom);
         form.getChildren().add(nom);
 
         //Prénom
-        Label labelPrénom = new Label("Prénom : ");
+        Label labelPrénom = new Label("Prénom :                               ");
         labelPrénom.setStyle("-fx-font: 16 arial;");
 
         TextField fieldPrenom = new TextField();
@@ -71,7 +73,7 @@ public class VueAjoutTiers {
         form.getChildren().add(prenom);
 
         //Date de naissance
-        Label labelDate = new Label("Date de naissance : ");
+        Label labelDate = new Label("Date de naissance :              ");
         labelDate.setStyle("-fx-font: 16 arial;");
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
@@ -89,7 +91,7 @@ public class VueAjoutTiers {
         form.getChildren().add(noSS);
 
         //rib
-        Label labelRib = new Label("RIB : ");
+        Label labelRib = new Label("RIB :                                       ");
         labelRib.setStyle("-fx-font: 16 arial;");
 
         TextField fieldRib = new TextField();
@@ -99,7 +101,7 @@ public class VueAjoutTiers {
         form.getChildren().add(rib);
 
         //mot de passe
-        Label labelMdp = new Label("Mot de passe : ");
+        Label labelMdp = new Label("Mot de passe :                       ");
         labelMdp.setStyle("-fx-font: 16 arial;");
 
         PasswordField fieldMdp = new PasswordField();
@@ -109,7 +111,7 @@ public class VueAjoutTiers {
         form.getChildren().add(mdp);
 
         //email
-        Label labelEmail = new Label("Email : ");
+        Label labelEmail = new Label("Email :                                    ");
         labelEmail.setStyle("-fx-font: 16 arial;");
 
         TextField fieldEmail = new TextField();
@@ -126,7 +128,7 @@ public class VueAjoutTiers {
 
             //Vérification que les champs obligatoires sont remplis
             if (fieldNom.getText().isEmpty() || fieldPrenom.getText().isEmpty() || fieldMdp.getText().isEmpty()) {
-                Popup popup = new Popup();
+
                 Label labelError = new Label("Merci de compléter le nom/prénom et de rentrer un mot de passe");
                 labelError.setStyle(" -fx-background-color: #de6767;-fx-padding: 10");
                 popup.getContent().add(labelError);
@@ -144,6 +146,7 @@ public class VueAjoutTiers {
                 Tiers nouveauTiers = new Tiers(nomValue, prenomValue, datePicker.getValue(), noSsValue, ribValue, mdpValue, emailValue);
 
                 ajouterTier(nouveauTiers, type, tiersConnecte);
+                popup.hide();
             }
         });
 

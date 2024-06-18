@@ -25,6 +25,7 @@ import java.util.List;
 public class VueAjoutBien {
     private Stage stage;
     private Scene scene;
+    private Popup popup = new Popup();
 
     public VueAjoutBien(Stage stage, Tiers tiersConnecte) {
         this.stage = stage;
@@ -47,7 +48,7 @@ public class VueAjoutBien {
         form.setSpacing(15);
 
         //adresse
-        Label labelAdresse = new Label("Adresse : ");
+        Label labelAdresse = new Label("Adresse :                      ");
         labelAdresse.setStyle("-fx-font: 16 arial;");
 
         TextField fieldNoRue = new TextField();
@@ -66,7 +67,7 @@ public class VueAjoutBien {
         form.getChildren().add(adresse);
 
         //No logement
-        Label labelNoLogement = new Label("N° logement : ");
+        Label labelNoLogement = new Label("N° logement :               ");
         labelNoLogement.setStyle("-fx-font: 16 arial;");
 
         TextField fieldNoLogement = new TextField();
@@ -76,7 +77,7 @@ public class VueAjoutBien {
         form.getChildren().add(noLogement);
 
         //Etage
-        Label labelEtage = new Label("Etage : ");
+        Label labelEtage = new Label("Etage :                          ");
         labelEtage.setStyle("-fx-font: 16 arial;");
 
         TextField fieldEtage = new TextField();
@@ -86,7 +87,7 @@ public class VueAjoutBien {
         form.getChildren().add(etage);
 
         //surface
-        Label labelSurface = new Label("Surface (en m²) : ");
+        Label labelSurface = new Label("Surface (en m²) :          ");
         labelSurface.setStyle("-fx-font: 16 arial;");
 
         TextField fieldSurface = new TextField();
@@ -96,7 +97,7 @@ public class VueAjoutBien {
         form.getChildren().add(surface);
 
         //nb pieces
-        Label labelNbPieces = new Label("Nombre de pièces : ");
+        Label labelNbPieces = new Label("Nombre de pièces :      ");
         labelNbPieces.setStyle("-fx-font: 16 arial;");
 
         TextField fieldNbPieces = new TextField();
@@ -106,7 +107,7 @@ public class VueAjoutBien {
         form.getChildren().add(nbPieces);
 
         // Création d'un DatePicker avec une date
-        Label labeldate = new Label("Date : ");
+        Label labeldate = new Label("Date :                           ");
         labeldate.setStyle("-fx-font: 16 arial;");
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
@@ -114,7 +115,7 @@ public class VueAjoutBien {
         form.getChildren().add(fielddate);
 
         //meublé
-        Label labelMeuble = new Label("Logement meublé : ");
+        Label labelMeuble = new Label("Logement meublé :       ");
         labelMeuble.setStyle("-fx-font: 16 arial;");
 
         CheckBox checkboxMeuble = new CheckBox();
@@ -123,7 +124,7 @@ public class VueAjoutBien {
         form.getChildren().add(meuble);
 
         //type de bien
-        Label labelTypeBien = new Label("Type de bien : ");
+        Label labelTypeBien = new Label("Type de bien :              ");
         labelTypeBien.setStyle("-fx-font: 16 arial;");
 
         ChoiceBox selectTypeBien = new ChoiceBox();
@@ -144,7 +145,7 @@ public class VueAjoutBien {
         form.getChildren().add(classificationBien);
 
         //type chauffage
-        Label labelTypeChauffage = new Label("Type de chauffage : ");
+        Label labelTypeChauffage = new Label("Type de chauffage :     ");
         labelTypeChauffage.setStyle("-fx-font: 16 arial;");
 
         ChoiceBox selectTypeChauffage = new ChoiceBox();
@@ -155,7 +156,7 @@ public class VueAjoutBien {
         form.getChildren().add(typeChauffage);
 
         //type eau chaude
-        Label labelEauChaude = new Label("Type eau chaude : ");
+        Label labelEauChaude = new Label("Type eau chaude :       ");
         labelEauChaude.setStyle("-fx-font: 16 arial;");
 
         ChoiceBox selectEauChaude = new ChoiceBox();
@@ -166,7 +167,7 @@ public class VueAjoutBien {
         form.getChildren().add(eauChaude);
 
         //description
-        Label labelDescription = new Label("Description : ");
+        Label labelDescription = new Label("Description :                 ");
         labelDescription.setStyle("-fx-font: 16 arial;");
 
         TextArea fieldDescription = new TextArea();
@@ -176,7 +177,7 @@ public class VueAjoutBien {
         form.getChildren().add(description);
 
         //image
-        Label labelImage = new Label("Image : ");
+        Label labelImage = new Label("Image :                        ");
         labelImage.setStyle("-fx-font: 16 arial;");
 
         FileChooser fileChooser = new FileChooser();
@@ -195,7 +196,7 @@ public class VueAjoutBien {
         form.getChildren().add(image);
 
         //proprietaire
-        Label labelProprietaire = new Label("Propriétaire : ");
+        Label labelProprietaire = new Label("Propriétaire :                ");
         labelProprietaire.setStyle("-fx-font: 16 arial;");
 
         //Récupération des propriétaires
@@ -211,7 +212,7 @@ public class VueAjoutBien {
         form.getChildren().add(proprietaire);
 
         //loué
-        Label labelLoue = new Label("Logement loué : ");
+        Label labelLoue = new Label("Logement loué :           ");
         labelLoue.setStyle("-fx-font: 16 arial;");
 
         CheckBox checkboxLoue = new CheckBox();
@@ -227,7 +228,7 @@ public class VueAjoutBien {
 
             //Vérification que les champs obligatoires sont remplis
             if (fieldNoRue.getText().isEmpty() || fieldRue.getText().isEmpty() || fieldVille.getText().isEmpty() || file[0] == null) {
-                Popup popup = new Popup();
+
                 Label labelError = new Label("Merci de compléter l'adresse et de choisir une image");
                 labelError.setStyle(" -fx-background-color: #de6767;-fx-padding: 10");
                 popup.getContent().add(labelError);
@@ -262,6 +263,7 @@ public class VueAjoutBien {
                 }
 
                 ajouterBien(nouveauBien, nouvelleAdresse, proprietaireChoisit, file[0], tiersConnecte);
+                popup.hide();
             }
         });
 
