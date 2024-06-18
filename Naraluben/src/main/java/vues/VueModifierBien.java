@@ -32,7 +32,14 @@ public class VueModifierBien {
         Label titre = new Label("Modification du bien");
         titre.setStyle("-fx-font: 30 arial;-fx-text-fill: #5693bd;-fx-padding: 30px;");
 
-        Button boutonGoBack = ButtonsUtil.createGoBackButton(this.stage, tiersConnecte);
+        Button boutonGoBack = new Button("Retour");
+        boutonGoBack.setOnMouseClicked(event -> {
+            try {
+                new VueDetailsBien(stage, bien, tiersConnecte);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
         HBox hboxGoback = ButtonsUtil.createStyleButton(boutonGoBack, "vert");
 
         //Container pour le formulaire

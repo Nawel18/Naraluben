@@ -52,7 +52,7 @@ public class VueTiers {
         }
 
         TableView tableAgents = new TableView();
-        tableAgents.setMaxWidth(1000);
+        tableAgents.setMaxWidth(1145);
 
         Label titreAgents = new Label("Agents :");
         titreAgents.setStyle("-fx-font: 30 arial;-fx-padding: 30px;");
@@ -141,9 +141,9 @@ public class VueTiers {
         };
 
         colonneSupprimer.setCellFactory(cellFactory);
+        colonneSupprimer.setStyle("-fx-alignment: CENTER;");
 
-
-        tableAgents.resizeColumn(colonneSupprimer, 110);
+        tableAgents.resizeColumn(colonneSupprimer, 60);
 
         tableAgents.setItems(listeAgents);
         tableAgents.getColumns().addAll(colonneNumero, colonneNom, colonnePrenom, colonneNaissance, colonneSecurite, colonneRib, colonneEmail, colonneSupprimer);
@@ -163,7 +163,7 @@ public class VueTiers {
         }
 
         TableView tableProprietaires = new TableView();
-        tableProprietaires.setMaxWidth(1000);
+        tableProprietaires.setMaxWidth(1145);
 
         Label titreProprietaires = new Label("Propriétaires :");
         titreProprietaires.setStyle("-fx-font: 30 arial;-fx-padding: 30px;");
@@ -260,9 +260,9 @@ public class VueTiers {
         };
 
         colonneSupprimer2.setCellFactory(cellFactory2);
+        colonneSupprimer2.setStyle("-fx-alignment: CENTER;");
 
-
-        tableProprietaires.resizeColumn(colonneSupprimer2, 110);
+        tableProprietaires.resizeColumn(colonneSupprimer2, 60);
         tableProprietaires.setItems(listeProprietaires);
         tableProprietaires.getColumns().addAll(colonneNumero1, colonneNom1, colonnePrenom1, colonneNaissance1, colonneSecurite1, colonneRib1, colonneEmail1, colonneSupprimer2);
 
